@@ -93,9 +93,10 @@ function switchTab(tab) {
     lb.innerHTML = renderRows(allData.overall, true, null);
   } else {
     const rows = allData.stations[tab] || [];
-    const isTimeBased = tab === "Quick"; // ← change to match your exact station tab name
+    const isTimeBased = tab === "Quick";
+    const noBrackets = tab === "QR" ? null : isTimeBased;
     lb.innerHTML = rows.length
-      ? renderRows(rows, true, isTimeBased)
+      ? renderRows(rows, true, noBrackets)
       : "<p style='color:#555; text-align:center; font-size:24px; margin-top:32px;'>No data yet</p>";
   }
 }
