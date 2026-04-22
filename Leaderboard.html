@@ -2,50 +2,117 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
   <title>Leaderboard</title>
   <style>
-    .lb-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #c9922a; font-size: 18px; }
-    .lb-rank { font-size: 24px; width: 40px; }
-    .lb-team { flex: 1; font-weight: 500; }
-    .lb-score { font-size: 20px; font-weight: 700; color: #c9922a; }
-    .lb-1 { background: #fff8e1; }
-    .lb-2 { background: #f5f5f5; }
-    .lb-3 { background: #fbe9e7; }
-    #last-updated { font-size: 12px; color: #888; text-align: center; margin-top: 12px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0a;
+      color: #ffffff;
+      font-family: 'Georgia', serif;
+      min-height: 100vh;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 64px;
+      color: #c9922a;
+      letter-spacing: 6px;
+      margin-bottom: 48px;
+      text-transform: uppercase;
+    }
+
+    .lb-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 24px 40px;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+    }
+
+    .lb-1 { border-left: 8px solid #FFD700; background: #1f1a00; }
+    .lb-2 { border-left: 8px solid #C0C0C0; background: #1a1a1a; }
+    .lb-3 { border-left: 8px solid #cd7f32; background: #1a1000; }
+    .lb-4, .lb-5 { border-left: 8px solid #333; }
+
+    .lb-rank {
+      font-size: 56px;
+      width: 80px;
+      text-align: center;
+    }
+
+    .lb-team {
+      flex: 1;
+    }
+
+    .lb-team-name {
+      font-size: 48px;
+      font-weight: bold;
+      color: #ffffff;
+      letter-spacing: 2px;
+    }
+
+    .lb-members {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .lb-member-badge {
+      font-size: 20px;
+      background: transparent;
+      color: #c9922a;
+      border: 1px solid #c9922a;
+      border-radius: 4px;
+      padding: 2px 10px;
+      font-family: sans-serif;
+    }
+
+    .lb-score {
+      font-size: 56px;
+      font-weight: bold;
+      color: #c9922a;
+      min-width: 200px;
+      text-align: right;
+    }
+
+    #last-updated {
+      text-align: center;
+      font-size: 20px;
+      color: #555;
+      margin-top: 32px;
+      font-family: sans-serif;
+    }
   </style>
 </head>
 <body>
-<div class="panel">
-<div class="opening-card">
-  <h2>🏆 Leaderboard</h2>
-  <div id="leaderboard">Loading...</div>
-  <div id="last-updated"></div>
-</div>
-</div>
+
+<h1>⚓ Leaderboard</h1>
+<div id="leaderboard">Loading...</div>
+<div id="last-updated"></div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzu6S8v9JFdyw9-OMdStp7OGdaLEs6hLZ25AMI6bWhw60O8puXTd9QziAKmQ7O6ZPlY/exec";
+const SCRIPT_URL = "YOUR_WEB_APP_URL_HERE";
 const MEDALS = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"];
 
 function loadLeaderboard() {
   fetch(SCRIPT_URL)
     .then(r => r.json())
     .then(teams => {
-      // Sort highest to lowest
-      teams.sort((a, b) => b.score - a.score);
-
       const lb = document.getElementById("leaderboard");
       lb.innerHTML = teams.map((t, i) => `
         <div class="lb-row lb-${i+1}">
           <span class="lb-rank">${MEDALS[i] || i+1}</span>
           <div class="lb-team">
-            <div>${t.team}</div>
-            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:4px;">
+            <div class="lb-team-name">${t.team}</div>
+            <div class="lb-members">
               ${t.members.split(",").map(m => `
-                <span style="font-size:11px; background:#fff3e0; color:#c9922a; border:0.5px solid #c9922a; border-radius:4px; padding:2px 6px;">
-                  ${m.trim()}
-                </span>
+                <span class="lb-member-badge">${m.trim()}</span>
               `).join("")}
             </div>
           </div>
@@ -61,7 +128,6 @@ function loadLeaderboard() {
     });
 }
 
-// Load immediately then refresh every 30 seconds
 loadLeaderboard();
 setInterval(loadLeaderboard, 30000);
 </script>
