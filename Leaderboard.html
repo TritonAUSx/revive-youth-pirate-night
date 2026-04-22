@@ -63,7 +63,9 @@ function renderRows(teams, showMembers) {
             ${t.members.split(",").map(m => `<span class="lb-member-badge">${m.trim()}</span>`).join("")}
           </div>` : ""}
       </div>
-      <span class="lb-score">${t.score} pts</span>
+      <div class="lb-score">
+        ${t.time ? `${t.score} pts (${t.time})` : `${t.score} pts`}
+      </div>
     </div>
   `).join("");
 }
