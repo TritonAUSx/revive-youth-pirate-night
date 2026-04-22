@@ -39,7 +39,16 @@ function loadLeaderboard() {
       lb.innerHTML = teams.map((t, i) => `
         <div class="lb-row lb-${i+1}">
           <span class="lb-rank">${MEDALS[i] || i+1}</span>
-          <span class="lb-team">${t.team}</span>
+          <div class="lb-team">
+            <div>${t.team}</div>
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:4px;">
+              ${t.members.split(",").map(m => `
+                <span style="font-size:11px; background:#fff3e0; color:#c9922a; border:0.5px solid #c9922a; border-radius:4px; padding:2px 6px;">
+                  ${m.trim()}
+                </span>
+              `).join("")}
+            </div>
+          </div>
           <span class="lb-score">${t.score} pts</span>
         </div>
       `).join("");
