@@ -5,125 +5,101 @@
   <title>Leaderboard</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #fff; font-family: Georgia, serif; min-height: 100vh; padding: clamp(16px, 4vw, 40px); }
 
-    body {
-      background: #0a0a0a;
-      color: #ffffff;
-      font-family: 'Georgia', serif;
-      min-height: 100vh;
-      padding: clamp(16px, 4vw, 40px);
-    }
+    h1 { text-align: center; font-size: clamp(32px, 6vw, 64px); color: #c9922a; letter-spacing: clamp(2px, 1vw, 6px); margin-bottom: clamp(16px, 3vw, 32px); text-transform: uppercase; }
 
-    h1 {
-      text-align: center;
-      font-size: clamp(32px, 6vw, 64px);
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: clamp(16px, 3vw, 32px); }
+
+    .tab {
+      font-size: clamp(13px, 2vw, 20px);
+      padding: clamp(8px, 1.2vw, 12px) clamp(14px, 2vw, 24px);
+      border-radius: 8px;
+      border: 1px solid #c9922a;
+      background: transparent;
       color: #c9922a;
-      letter-spacing: clamp(2px, 1vw, 6px);
-      margin-bottom: clamp(24px, 4vw, 48px);
-      text-transform: uppercase;
+      cursor: pointer;
+      font-family: sans-serif;
     }
+    .tab.active { background: #c9922a; color: #000; font-weight: bold; }
 
-    .lb-row {
-      display: flex;
-      align-items: center;
-      gap: clamp(12px, 2vw, 24px);
-      padding: clamp(12px, 2vw, 24px) clamp(16px, 3vw, 40px);
-      margin-bottom: clamp(8px, 1.5vw, 16px);
-      border-radius: 12px;
-      background: #1a1a1a;
-      border: 1px solid #333;
-    }
-
+    .lb-row { display: flex; align-items: center; gap: clamp(12px, 2vw, 24px); padding: clamp(12px, 2vw, 24px) clamp(16px, 3vw, 40px); margin-bottom: clamp(8px, 1.5vw, 16px); border-radius: 12px; background: #1a1a1a; border: 1px solid #333; }
     .lb-1 { border-left: 8px solid #FFD700; background: #1f1a00; }
     .lb-2 { border-left: 8px solid #C0C0C0; background: #1a1a1a; }
     .lb-3 { border-left: 8px solid #cd7f32; background: #1a1000; }
     .lb-4, .lb-5 { border-left: 8px solid #333; }
 
-    .lb-rank {
-      font-size: clamp(28px, 5vw, 56px);
-      width: clamp(40px, 6vw, 80px);
-      text-align: center;
-      flex-shrink: 0;
-    }
-
+    .lb-rank { font-size: clamp(28px, 5vw, 56px); width: clamp(40px, 6vw, 80px); text-align: center; flex-shrink: 0; }
     .lb-team { flex: 1; min-width: 0; }
-
-    .lb-team-name {
-      font-size: clamp(22px, 4vw, 48px);
-      font-weight: bold;
-      color: #ffffff;
-      letter-spacing: clamp(1px, 0.3vw, 2px);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .lb-members {
-      display: flex;
-      flex-wrap: wrap;
-      gap: clamp(4px, 0.8vw, 8px);
-      margin-top: clamp(4px, 0.8vw, 8px);
-    }
-
-    .lb-member-badge {
-      font-size: clamp(11px, 1.8vw, 20px);
-      background: transparent;
-      color: #c9922a;
-      border: 1px solid #c9922a;
-      border-radius: 4px;
-      padding: 2px clamp(6px, 1vw, 10px);
-      font-family: sans-serif;
-      white-space: nowrap;
-    }
-
-    .lb-score {
-      font-size: clamp(24px, 4.5vw, 56px);
-      font-weight: bold;
-      color: #c9922a;
-      min-width: clamp(80px, 12vw, 200px);
-      text-align: right;
-      flex-shrink: 0;
-    }
-
-    #last-updated {
-      text-align: center;
-      font-size: clamp(12px, 1.8vw, 20px);
-      color: #555;
-      margin-top: clamp(16px, 3vw, 32px);
-      font-family: sans-serif;
-    }
+    .lb-team-name { font-size: clamp(22px, 4vw, 48px); font-weight: bold; color: #fff; letter-spacing: clamp(1px, 0.3vw, 2px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lb-members { display: flex; flex-wrap: wrap; gap: clamp(4px, 0.8vw, 8px); margin-top: clamp(4px, 0.8vw, 8px); }
+    .lb-member-badge { font-size: clamp(11px, 1.8vw, 20px); color: #c9922a; border: 1px solid #c9922a; border-radius: 4px; padding: 2px clamp(6px, 1vw, 10px); font-family: sans-serif; white-space: nowrap; }
+    .lb-score { font-size: clamp(24px, 4.5vw, 56px); font-weight: bold; color: #c9922a; min-width: clamp(80px, 12vw, 200px); text-align: right; flex-shrink: 0; }
+    #last-updated { text-align: center; font-size: clamp(12px, 1.8vw, 20px); color: #555; margin-top: clamp(16px, 3vw, 32px); font-family: sans-serif; }
   </style>
 </head>
 <body>
 
 <h1>⚓ Leaderboard</h1>
+
+<div class="tabs" id="tabs"></div>
 <div id="leaderboard">Loading...</div>
 <div id="last-updated"></div>
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzu6S8v9JFdyw9-OMdStp7OGdaLEs6hLZ25AMI6bWhw60O8puXTd9QziAKmQ7O6ZPlY/exec";
 const MEDALS = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"];
+let allData = null;
+let activeTab = "overall";
+
+function renderRows(teams, showMembers) {
+  return teams.map((t, i) => `
+    <div class="lb-row lb-${i+1}">
+      <span class="lb-rank">${MEDALS[i] || i+1}</span>
+      <div class="lb-team">
+        <div class="lb-team-name">${t.team}</div>
+        ${showMembers && t.members ? `
+          <div class="lb-members">
+            ${t.members.split(",").map(m => `<span class="lb-member-badge">${m.trim()}</span>`).join("")}
+          </div>` : ""}
+      </div>
+      <span class="lb-score">${t.score} pts</span>
+    </div>
+  `).join("");
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+
+  const lb = document.getElementById("leaderboard");
+  if (tab === "overall") {
+    lb.innerHTML = renderRows(allData.overall, true);
+  } else {
+    const rows = allData.stations[tab] || [];
+    lb.innerHTML = rows.length
+      ? renderRows(rows, false)
+      : "<p style='color:#555; text-align:center; font-size:24px; margin-top:32px;'>No data yet</p>";
+  }
+}
+
+function buildTabs() {
+  const tabs = document.getElementById("tabs");
+  const tabList = ["overall", ...Object.keys(allData.stations)];
+  tabs.innerHTML = tabList.map(t => `
+    <button class="tab ${t === activeTab ? "active" : ""}" data-tab="${t}" onclick="switchTab('${t}')">
+      ${t === "overall" ? "🏆 Overall" : t}
+    </button>
+  `).join("");
+}
 
 function loadLeaderboard() {
   fetch(SCRIPT_URL)
     .then(r => r.json())
-    .then(teams => {
-      const lb = document.getElementById("leaderboard");
-      lb.innerHTML = teams.map((t, i) => `
-        <div class="lb-row lb-${i+1}">
-          <span class="lb-rank">${MEDALS[i] || i+1}</span>
-          <div class="lb-team">
-            <div class="lb-team-name">${t.team}</div>
-            <div class="lb-members">
-              ${(t.members || "").split(",").map(m => `
-                <span class="lb-member-badge">${m.trim()}</span>
-              `).join("")}
-            </div>
-          </div>
-          <span class="lb-score">${t.score} pts</span>
-        </div>
-      `).join("");
-
+    .then(data => {
+      allData = data;
+      buildTabs();
+      switchTab(activeTab);
       document.getElementById("last-updated").textContent =
         "Last updated: " + new Date().toLocaleTimeString();
     })
