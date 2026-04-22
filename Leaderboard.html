@@ -52,7 +52,7 @@ const MEDALS = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"];
 let allData = null;
 let activeTab = "overall";
 
-function renderRows(teams, showMembers) {
+function renderRows(teams, showMembers, isTimeBased) {
   return teams.map((t, i) => `
     <div class="lb-row lb-${i+1}">
       <span class="lb-rank">${MEDALS[i] || i+1}</span>
@@ -64,7 +64,9 @@ function renderRows(teams, showMembers) {
           </div>` : ""}
       </div>
       <div class="lb-score">
-        ${t.time ? `${t.score} pts (${t.time})` : `${t.score} pts`}
+        ${isTimeBased
+          ? `${t.score} pts (${t.time})`
+          : `${t.score} pts (${t.raw})`}
       </div>
     </div>
   `).join("");
@@ -76,11 +78,12 @@ function switchTab(tab) {
 
   const lb = document.getElementById("leaderboard");
   if (tab === "overall") {
-    lb.innerHTML = renderRows(allData.overall, true);
+    lb.innerHTML = renderRows(allData.overall, true, false);
   } else {
     const rows = allData.stations[tab] || [];
+    const isTimeBased = tab === "Quick";  // ← change "Quick" to match your exact tab name
     lb.innerHTML = rows.length
-      ? renderRows(rows, true)
+      ? renderRows(rows, true, isTimeBased)
       : "<p style='color:#555; text-align:center; font-size:24px; margin-top:32px;'>No data yet</p>";
   }
 }
