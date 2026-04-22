@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="style.css">
+  <title>The Dock</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<div class="panel">
+<div class="opening-card">
+<div class="oc-header">
+  <h2>Quickest Team</h2>
+</div>
+<body>
+ <div class="box box-red">
+          <div class="box-label lbl-pink">Quickest to Finish</div>
+          <div class="challenge-text">Select Your Team then enter your members</div>
+  </div>
+  <div class="toast" id="toast"></div>
+</body>
+<div class="q-grid">
+   
+    </div></div>
+ <input id="score" placeholder="Finishing Time" style="padding:8px;width:90%;margin:5px;border:1px solid #c9922a;border-radius:6px;">
+
+<button class="miss-btn" onclick="submit()">Submit</button>
+</div>
+</div>
+
+<script>
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3000);
+}
+const URL = "https://script.google.com/macros/s/AKfycbzu6S8v9JFdyw9-OMdStp7OGdaLEs6hLZ25AMI6bWhw60O8puXTd9QziAKmQ7O6ZPlY/exec";
+
+let t = 0;
+let i;
+
+function start(s){
+  clearInterval(i);
+  t = s;
+
+  i = setInterval(()=>{
+    t--;
+    document.getElementById("timer").innerText =
+      Math.floor(t/60)+":"+String(t%60).padStart(2,"0");
+
+    if(t<=0) clearInterval(i);
+  },1000);
+}
+
+function submit(){
+  fetch(URL,{
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"text/plain"},
+    body:JSON.stringify({
+      team:document.getElementById("team").value,
+      station:"QUICK",
+      answer:document.getElementById("score").value,  // ← input → answer
+      timeLeft:t
+    })
+  });
+ showToast("Submitted! ⚓");
+}
+ 
+</script>   
+</div>
+</html>
