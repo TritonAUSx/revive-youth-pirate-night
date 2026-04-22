@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Leaderboard</title>
+  <style>
+    .lb-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #c9922a; font-size: 18px; }
+    .lb-rank { font-size: 24px; width: 40px; }
+    .lb-team { flex: 1; font-weight: 500; }
+    .lb-score { font-size: 20px; font-weight: 700; color: #c9922a; }
+    .lb-1 { background: #fff8e1; }
+    .lb-2 { background: #f5f5f5; }
+    .lb-3 { background: #fbe9e7; }
+    #last-updated { font-size: 12px; color: #888; text-align: center; margin-top: 12px; }
+  </style>
+</head>
+<body>
+<div class="panel">
+<div class="opening-card">
+  <h2>🏆 Leaderboard</h2>
+  <div id="leaderboard">Loading...</div>
+  <div id="last-updated"></div>
+</div>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzu6S8v9JFdyw9-OMdStp7OGdaLEs6hLZ25AMI6bWhw60O8puXTd9QziAKmQ7O6ZPlY/exec";
+const MEDALS = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"];
+
+function loadLeaderboard() {
+  fetch(SCRIPT_URL)
+    .then(r => r.json())
+    .then(teams => {
+      // Sort highest to lowest
+      teams.sort((a, b) => b.score - a.score);
+
+      const lb = document.getElementById("leaderboard");
+      lb.innerHTML = teams.map((t, i) => `
+        <div class="lb-row lb-${i+1}">
+          <span class="lb-rank">${MEDALS[i] || i+1}</span>
+          <span class="lb-team">${t.team}</span>
+          <span class="lb-score">${t.score} pts</span>
+        </div>
+      `).join("");
+
+      document.getElementById("last-updated").textContent =
+        "Last updated: " + new Date().toLocaleTimeString();
+    })
+    .catch(() => {
+      document.getElementById("leaderboard").textContent = "Could not load leaderboard.";
+    });
+}
+
+// Load immediately then refresh every 30 seconds
+loadLeaderboard();
+setInterval(loadLeaderboard, 30000);
+</script>
+
+</body>
+</html>
