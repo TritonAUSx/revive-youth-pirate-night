@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>QR Station 3 (Basketball Ring)</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Travel Plans photography website">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body data-station="QR3">
+
+<div class="wrap">
+
+<div class="page">
+  <div class="ph">
+    <span class="ph-icon">🏀</span>
+    <div class="ph-name">QR Station 3</div>
+    <div class="ph-loc">Basketball Ring</div>
+  </div>
+
+  <div class="pb">
+
+    <!-- CLUE -->
+    <div class="scramble-display">
+      <div class="scramble-lbl">Unscramble this word</div>
+      <div class="scramble-word">ARHONC</div>
+    </div>
+
+    <!-- SUBMISSION BOX -->
+    <div class="form-note">
+
+      <div style="margin-bottom:6px;font-family:'Cinzel',serif;font-size:12px;">
+        Submit your answer
+      </div>
+
+      <select id="team">
+        <option>Blackbeard</option>
+        <option>Hook</option>
+        <option>Kenway</option>
+        <option>Calico Jack</option>
+        <option>Sparrow</option>
+      </select>
+
+      <input id="answer" placeholder="Unscrambled Word"
+        style="padding:8px;width:90%;margin:5px;border:1px solid #c9922a;border-radius:6px;">
+
+      <button onclick="submitAnswer()" class="start-btn">
+        Submit Answer
+      </button>
+
+    </div>
+
+  </div>
+</div>
+<div class="oc-qr-note">QR4 clue: "Blimey! Is that a ghost ship? Not everything on this voyage is real"</div>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzu6S8v9JFdyw9-OMdStp7OGdaLEs6hLZ25AMI6bWhw60O8puXTd9QziAKmQ7O6ZPlY/exec";
+const STATION = "QR3";
+
+function submitAnswer() {
+  const team = document.getElementById("team").value;
+  const answer = document.getElementById("answer").value;
+
+  if (!team || !answer) {
+    alert("Fill in both fields!");
+    return;
+  }
+
+  fetch(SCRIPT_URL, {
+    method: "POST",                    // ← add this
+    headers: { "Content-Type": "text/plain" }, // ← add this
+    body: JSON.stringify({
+      team: team,
+      answer: answer,
+      station: STATION
+    })
+  });
+
+  alert("Submitted! ⚓");
+  
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Galley Answers</title>
+  <style>
+    .answer-input {
+      font-size: 16px;
+      padding: 10px 12px;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #c9922a;
+      border-radius: 6px;
+      margin-top: 6px;
+    }
+    .q-card { display: flex; flex-direction: column; }
+    .send-btn {
+      display: block;
+      width: 100%;
+      font-size: 18px;
+      padding: 14px;
+      margin-top: 24px;
+      background: #c9922a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    select.team-select {
+      font-size: 16px;
+      padding: 10px 12px;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #c9922a;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+<div class="panel">
+<div class="opening-card">
+  <div class="oc-header">
+    <h2>🍕 The Galley (Sarah van Gaalen)</h2>
+  </div>
+
+  <select id="team" class="team-select">
+    <option value="">Select your team...</option>
+    <option>Blackbeard</option>
+    <option>Hook</option>
+    <option>Kenway</option>
+    <option>Calico Jack</option>
+    <option>Sparrow</option>
+  </select>
+
+  <div class="q-grid">
+    <div class="q-card"><span class="q-num">Puzzle 1</span><div class="q-text">👁️ + ⛵ = ?</div><input class="answer-input" id="a1" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 2</span><div class="q-text">🌊 + 👑 = ?</div><input class="answer-input" id="a2" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 3</span><div class="q-text">🗺️ + ❌ = ?</div><input class="answer-input" id="a3" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 4</span><div class="q-text">💀 + ⚓ = ?</div><input class="answer-input" id="a4" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 5</span><div class="q-text">🦜 + 🎮 = ?</div><input class="answer-input" id="a5" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 6</span><div class="q-text">🦌 + 🐜 + 👂 = ?</div><input class="answer-input" id="a6" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 7</span><div class="q-text">👧 + 🦁 = ?</div><input class="answer-input" id="a7" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 8</span><div class="q-text">🍬 + 🏴‍☠️ = ?</div><input class="answer-input" id="a8" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 9</span><div class="q-text">👁️ + 🏴 = ?</div><input class="answer-input" id="a9" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 10</span><div class="q-text">⚔️ + 🐟 = ?</div><input class="answer-input" id="a10" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 11</span><div class="q-text">🌊 + 🐴 = ?</div><input class="answer-input" id="a11" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 12</span><div class="q-text">🗡️ + 💎 = ?</div><input class="answer-input" id="a12" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 13</span><div class="q-text">🏴‍☠️ + 🚢 = ?</div><input class="answer-input" id="a13" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 14</span><div class="q-text">🌟 + 💰 = ?</div><input class="answer-input" id="a14" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 15</span><div class="q-text">🔭 + 🏝️ = ?</div><input class="answer-input" id="a15" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 16</span><div class="q-text">🦴 + 🏴 = ?</div><input class="answer-input" id="a16" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 17</span><div class="q-text">🍎 + 👁️ = ?</div><input class="answer-input" id="a17" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 18</span><div class="q-text">⛵ + 🔑 = ?</div><input class="answer-input" id="a18" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 19</span><div class="q-text">🌊 + 🐊 = ?</div><input class="answer-input" id="a19" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Puzzle 20</span><div class="q-text">💀 + 🏝️ = ?</div><input class="answer-input" id="a20" placeholder="Your answer"></div>
+  </div>
+
+  <button class="send-btn" onclick="sendAnswers()">📱 Send Answers to Sarah</button>
+
+</div>
+</div>
+
+<script>
+const VOLUNTEER_NUMBER = "610430162102"; // ← replace with volunteer's number (Australian format, no +)
+
+function sendAnswers() {
+  const team = document.getElementById("team").value;
+  if (!team) { alert("Please select your team first!"); return; }
+
+  const answers = [];
+  for (let i = 1; i <= 20; i++) {
+    const val = document.getElementById("a" + i).value.trim() || "—";
+    answers.push(i + ". " + val);
+  }
+
+  const body = encodeURIComponent(
+    "GALLEY ANSWERS\nTeam: " + team + "\n\n" + answers.join("\n")
+  );
+
+  window.location.href = "sms:" + VOLUNTEER_NUMBER + "?body=" + body;
+}
+</script>
+
+</body>
+</html>

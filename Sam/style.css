@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--gold:#C9922A;--gold-light:#F0C060;--dark:#130e05;--parchment:#F5EDCF;--parchment-dark:#E8D9A8;--ink:#2C1810;--red:#8B1A1A;--green:#1a4a1a;--green-bright:#7eff7e;--green-border:#3a8a3a;}
+body{font-family:'Crimson Text',Georgia,serif;background:transparent;}
+.wrap{max-width:680px;margin:0 auto;padding:.75rem 0;}
+
+/* NAV TABS */
+.tabs{display:flex;gap:4px;margin-bottom:.75rem;background:var(--parchment);border:2px solid var(--gold);border-radius:10px;padding:6px;}
+.tab{flex:1;padding:6px 4px;text-align:center;cursor:pointer;border-radius:7px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;color:var(--ink);transition:all .2s;border:1.5px solid transparent;}
+.tab:hover{background:var(--parchment-dark);}
+.tab.active{background:var(--gold);border-color:var(--gold);}
+
+/* TEAM CARDS */
+.team-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.75rem;}
+.team-card{background:var(--parchment);border:2px solid var(--gold);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;}
+.team-card:hover{transform:translateY(-2px);}
+.team-card.selected{border-color:var(--gold-light);box-shadow:0 0 0 2px var(--gold);}
+.tc-header{background:var(--dark);padding:.75rem 1rem;border-bottom:2px solid var(--gold);text-align:center;}
+.tc-ship{font-size:22px;display:block;}
+.tc-name{font-family:'Cinzel',serif;font-size:13px;color:var(--gold-light);font-weight:700;letter-spacing:1px;}
+.tc-body{padding:.75rem 1rem;}
+.tc-label{font-family:'Cinzel',serif;font-size:9px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;}
+.tc-station{font-family:'Cinzel',serif;font-size:14px;color:var(--ink);font-weight:700;}
+.tc-location{font-size:12px;color:var(--ink);opacity:.7;font-style:italic;}
+.rotation-list{margin-top:.5rem;border-top:1px solid rgba(201,146,42,.3);padding-top:.5rem;}
+.rot-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+.rot-num{font-family:'Cinzel',serif;font-size:9px;color:var(--gold);width:16px;flex-shrink:0;}
+.rot-name{font-size:12px;color:var(--ink);}
+.rot-arrow{font-size:10px;color:var(--gold);opacity:.5;}
+
+/* STATION SELECTOR */
+.station-picker{background:var(--parchment);border:2px solid var(--gold);border-radius:10px;padding:.75rem;margin-bottom:.75rem;}
+.picker-title{font-family:'Cinzel',serif;font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:.5rem;text-align:center;}
+.picker-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
+.picker-btn{background:var(--parchment-dark);border:1.5px solid var(--gold);border-radius:7px;padding:5px 3px;cursor:pointer;text-align:center;font-family:'Cinzel',serif;transition:all .2s;}
+.picker-btn:hover{background:var(--gold-light);}
+.picker-btn.active{background:var(--gold);}
+.pb-icon{font-size:16px;display:block;}
+.pb-label{font-size:8px;color:var(--ink);display:block;line-height:1.2;margin-top:2px;}
+
+/* PAGE */
+.page{background:var(--parchment);border:2px solid var(--gold);border-radius:12px;overflow:hidden;position:relative;}
+.page-texture{position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(139,90,40,.03) 28px,rgba(139,90,40,.03) 29px),repeating-linear-gradient(90deg,transparent,transparent 55px,rgba(139,90,40,.02) 55px,rgba(139,90,40,.02) 56px);}
+.ph{background:var(--dark);padding:1rem 1.5rem;text-align:center;border-bottom:3px solid var(--gold);position:relative;}
+.ph-badge{position:absolute;top:8px;left:10px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:20px;border:1px solid var(--gold);color:var(--gold);background:rgba(201,146,42,.15);}
+.ph-type{position:absolute;top:8px;right:10px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:20px;}
+.ph-icon{font-size:24px;display:block;margin-bottom:3px;}
+.ph-sub{font-family:'Cinzel',serif;font-size:10px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;display:block;margin-bottom:3px;}
+.ph-name{font-family:'Cinzel',serif;font-size:20px;color:var(--gold-light);font-weight:700;line-height:1.2;}
+.ph-loc{display:inline-block;background:rgba(201,146,42,.2);border:1px solid var(--gold);border-radius:20px;padding:2px 10px;font-size:11px;color:var(--gold-light);margin-top:6px;font-family:'Cinzel',serif;}
+.pb{padding:1.25rem;position:relative;}
+.corner{position:absolute;font-size:16px;opacity:.12;pointer-events:none;}
+.corner.tl{top:6px;left:8px;} .corner.tr{top:6px;right:8px;}
+.corner.bl{bottom:6px;left:8px;} .corner.br{bottom:6px;right:8px;}
+.divider{text-align:center;color:var(--gold);font-size:12px;margin:.5rem 0;letter-spacing:8px;}
+.box{border-radius:8px;padding:.85rem 1.1rem;margin:.5rem 0;}
+.box-parchment{background:rgba(44,24,16,.06);border:1.5px solid rgba(201,146,42,.4);}
+.box-red{background:var(--red);}
+.box-dark{background:var(--dark);}
+.box-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:.4rem;}
+.lbl-gold{color:var(--gold);}
+.lbl-pink{color:#F9C0C0;}
+.lbl-goldl{color:var(--gold-light);}
+.clue-text{font-style:italic;font-size:16px;line-height:1.6;color:var(--ink);}
+.challenge-text{font-size:15px;color:#fff;line-height:1.6;font-weight:600;}
+.code-row{display:flex;align-items:center;gap:1rem;}
+.code-word{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--gold-light);letter-spacing:4px;flex:1;text-align:center;}
+
+/* MATHS / REBUS grids */
+.q-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:.5rem;}
+.q-card{background:rgba(44,24,16,.08);border:1px solid rgba(201,146,42,.35);border-radius:7px;padding:.6rem .8rem;text-align: center;}
+.q-num{font-family:'Cinzel',serif;font-size:9px;color:var(--gold);letter-spacing:1px;display:block;margin-bottom:2px;}
+.q-num-index{font-family:'Cinzel',serif;font-size:15px;color:var(--gold);letter-spacing:1px;display:block;margin-bottom:2px;}
+.q-text{font-size:13px;color:var(--ink);line-height:1.4;}
+.q-ans{font-size:11px;color:var(--gold);font-style:italic;margin-top:3px;}
+
+/* TIMER */
+.timer-box{display:flex;align-items:center;justify-content:center;gap:10px;background:#0a2a0a;border:2px solid var(--green-border);border-radius:8px;padding:.6rem 1rem;margin:.5rem 0 0;}
+.timer-text{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--green-bright);letter-spacing:3px;}
+.timer-lbl{font-family:'Cinzel',serif;font-size:9px;color:var(--green-bright);letter-spacing:1px;opacity:.7;}
+.start-btn{display:block;width:50%;margin-top:.4rem;background:var(--green);border:1.5px solid var(--green-border);border-radius:8px;padding:.45rem;font-family:'Cinzel',serif;font-size:12px;color:white;letter-spacing:2px;cursor:pointer;text-transform:uppercase;}
+.reset-btn{display:block;width:50%;margin-top:.4rem;background:var(--red);border:1.5px solid var(--green-border);border-radius:8px;padding:.45rem;font-family:'Cinzel',serif;font-size:12px;color:rgb(255, 255, 255);letter-spacing:2px;cursor:pointer;text-transform:uppercase;}
+.start-btn:disabled{opacity:.4;cursor:default;}
+.start-btn:disabled{opacity:.4;cursor:default;}
+.score-row{display:flex;gap:8px;margin-top:.5rem;}
+.score-box{background:#0a2a0a;border:1.5px solid var(--green-border);border-radius:8px;padding:.45rem .8rem;text-align:center;flex:1;}
+.score-num{font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--green-bright);display:block;}
+.score-lbl{font-family:'Cinzel',serif;font-size:8px;color:var(--green-bright);opacity:.7;letter-spacing:1px;text-transform:uppercase;}
+.action-row{display:flex;gap:8px;margin-top:.5rem;}
+.putt-btn{background:var(--gold);border:none;border-radius:8px;padding:.65rem 1rem;font-family:'Cinzel',serif;font-size:12px;color:var(--dark);font-weight:700;cursor:pointer;flex:1;transition:all .15s;}
+.putt-btn:active{transform:scale(.95);}
+.putt-btn:disabled{opacity:.4;cursor:default;}
+.miss-btn{background:transparent;border:1.5px solid rgba(201,146,42,.5);border-radius:8px;padding:.65rem .9rem;font-family:'Cinzel',serif;font-size:11px;color:var(--gold);cursor:pointer;transition:all .15s;}
+.miss-btn:disabled{opacity:.4;cursor:default;}
+.result-banner{background:var(--dark);border:2px solid var(--gold);border-radius:8px;padding:.9rem;text-align:center;margin-top:.5rem;display:none;}
+.result-banner.show{display:block;}
+.result-title{font-family:'Cinzel',serif;font-size:12px;color:var(--gold-light);letter-spacing:2px;}
+.result-score{font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:var(--gold);display:block;margin:3px 0;}
+.result-sub{font-size:12px;color:rgba(240,192,96,.7);font-style:italic;}
+
+/* FITNESS */
+.fitness-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:.5rem 0;}
+.fit-box{background:var(--red);border-radius:8px;padding:.7rem .5rem;text-align:center;}
+.fit-num{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:#fff;display:block;}
+.fit-label{font-family:'Cinzel',serif;font-size:9px;color:#F9C0C0;letter-spacing:1px;text-transform:uppercase;}
+.fit-counter{display:flex;align-items:center;gap:8px;margin-top:.4rem;}
+.fit-btn{background:var(--red);border:1.5px solid rgba(255,255,255,.4);border-radius:7px;padding:.4rem .7rem;font-family:'Cinzel',serif;font-size:13px;color:#fff;cursor:pointer;flex:1;text-align:center;}
+.fit-btn:disabled{opacity:.4;cursor:default;}
+.fit-tally{font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:var(--gold-light);min-width:32px;text-align:center;}
+
+/* COLOUR GAME */
+.color-game{margin:.5rem 0;}
+.color-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:.5rem 0;}
+.color-card{border-radius:8px;padding:.9rem .5rem;text-align:center;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5);cursor:default;}
+.called-card{outline:3px dashed #fff;outline-offset:2px;}
+.vol-controls{display:flex;gap:6px;flex-wrap:wrap;margin:.5rem 0;}
+.vol-btn{background:var(--parchment-dark);border:1.5px solid var(--gold);border-radius:7px;padding:4px 10px;font-family:'Cinzel',serif;font-size:10px;color:var(--ink);cursor:pointer;transition:all .2s;}
+.vol-btn:hover{background:var(--gold-light);}
+.vol-btn.active-color{background:var(--gold);color:var(--dark);}
+.round-display{background:var(--dark);border-radius:8px;padding:.6rem 1rem;text-align:center;margin:.5rem 0;}
+.round-num{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--gold-light);display:block;}
+.round-lbl{font-family:'Cinzel',serif;font-size:9px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
+
+/* QR PUZZLE */
+.scramble-display{background:var(--dark);border-radius:8px;padding:1rem;text-align:center;margin:.5rem 0;}
+.scramble-word{font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:var(--gold-light);letter-spacing:6px;}
+.scramble-lbl{font-family:'Cinzel',serif;font-size:9px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:.4rem;}
+.form-note{background:rgba(44,24,16,.06);border:1.5px solid rgba(201,146,42,.4);border-radius:8px;padding:.75rem 1rem;margin:.5rem 0;text-align:center;}
+.form-note-text{font-family:'Cinzel',serif;font-size:12px;color:var(--ink);line-height:1.5;}
+
+.pf{border-top:2px solid rgba(201,146,42,.3);padding:.6rem 1.5rem;text-align:center;font-family:'Cinzel',serif;font-size:10px;color:var(--gold);letter-spacing:1px;}
+
+/* OPENING CARD */
+.opening-card{background:var(--parchment);border:2px solid var(--gold);border-radius:12px;overflow:hidden;}
+.oc-header{background:var(--dark);padding:1.5rem;text-align:center;border-bottom:3px solid var(--gold);}
+.oc-skull{font-size:40px;display:block;margin-bottom:.5rem;}
+.oc-title{font-family:'Cinzel',serif;font-size:22px;color:var(--gold-light);font-weight:900;letter-spacing:2px;}
+.oc-sub{font-family:'Cinzel',serif;font-size:11px;color:var(--gold);letter-spacing:3px;margin-top:4px;}
+.oc-body{padding:1.5rem;}
+.oc-team-name{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:1rem;}
+.oc-ship{font-size:32px;text-align:center;display:block;margin-bottom:.5rem;}
+.oc-start-label{font-family:'Cinzel',serif;font-size:10px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;text-align:center;margin-bottom:.4rem;}
+.oc-station{background:var(--red);border-radius:10px;padding:1rem;text-align:center;margin-bottom:1rem;}
+.oc-station-name{font-family:'Cinzel',serif;font-size:20px;color:#fff;font-weight:700;}
+.oc-station-loc{font-size:14px;color:#F9C0C0;margin-top:3px;font-style:italic;}
+.oc-rotation{background:rgba(44,24,16,.06);border:1.5px solid rgba(201,146,42,.4);border-radius:8px;padding:.85rem 1rem;}
+.oc-rot-title{font-family:'Cinzel',serif;font-size:9px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:.5rem;}
+.oc-rot-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.oc-rot-n{font-family:'Cinzel',serif;font-size:10px;color:var(--gold);width:20px;flex-shrink:0;}
+.oc-rot-s{font-size:14px;color:var(--ink);}
+.oc-rot-l{font-size:11px;color:var(--ink);opacity:.6;font-style:italic;}
+.oc-qr-note{text-align:center;font-size:13px;color:var(--ink);font-style:italic;margin-top:.75rem;line-height:1.5;}
+h2{color: var(--parchment);}
+.selector{justify-content:center;align-items:center;background: white;border:1.5px solid rgba(201,146,42,.5);border-radius:8px;padding:.65rem .9rem;font-family:'Cinzel',serif;font-size:15px;color:darkgoldenrod;cursor:pointer;transition:all .15s;}
+a,a:visited{color: var(--ink);text-decoration: none;text-transform: uppercase;text-align: center;font-weight: bolder;}
+/* Bigger tap targets */
+button, select, input {
+  font-size: 16px;      /* prevents iOS auto-zoom on focus */
+  padding: 12px 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Readable text */
+body {
+  font-size: 16px;
+  padding: 16px;
+  background: var(--parchment);
+}
+
+/* Timer big and readable */
+#timer {
+  font-size: 48px;
+}
+a.index-page{color: black;}
+a.back-btn{color: var(--parchment);}
