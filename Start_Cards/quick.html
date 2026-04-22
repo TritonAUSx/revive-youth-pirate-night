@@ -14,13 +14,49 @@
  <div class="box box-red">
           <div class="box-label lbl-pink">Quickest to Finish</div>
           <div class="challenge-text">Select Your Team then enter your members</div>
+          <h1>Next Clue</h1>
+           <div class="oc-ship" style="text-align: center;"><img id="teamLogo" src="" alt="Select a team" style="width:200px; display:none;"></div>
   </div>
   <div class="toast" id="toast"></div>
 </body>
+
+            <div class="oc-team-name">
+                <select id="team" onchange="changeImage()">
+                    <option value="">-- Select a Team --</option>
+                    <option value="Blackbeard">Blackbeard</option>
+                    <option value="Sparrow">Sparrow</option>
+                    <option value="Calico_Jack">Calico Jack</option>
+                    <option value="Hook">Hook</option>
+                    <option value="Kenway">Kenway</option>
+                </select>
+
+                <script>
+                    const teamImages = {
+                        Team_1: "images/Blackbeard.webp",
+                        Team_2: "images/Sparrow.webp",
+                        Team_3: "images/Calico_Jack.png",
+                        Team_4: "images/Hook.webp",
+                        Team_5: "images/Kenway.jpg"
+                    };
+
+                    function changeImage() {
+                        const select = document.getElementById("team");
+                        const img = document.getElementById("teamLogo");
+                        const selected = select.value;
+
+                        if (selected && teamImages[selected]) {
+                            img.src = teamImages[selected];
+                            img.style.display = "block";
+                        } else {
+                            img.src = "";
+                            img.style.display = "none";
+                         }
+                    }
+                </script>
 <div class="q-grid">
    
     </div></div>
- <input id="score" placeholder="Finishing Time" style="padding:8px;width:90%;margin:5px;border:1px solid #c9922a;border-radius:6px;">
+ <input id="score" placeholder="Finishing" style="padding:8px;width:90%;margin:5px;border:1px solid #c9922a;border-radius:6px;">
 
 <button class="miss-btn" onclick="submit()">Submit</button>
 </div>
