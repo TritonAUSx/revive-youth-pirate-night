@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="style.css">
+  <title>The Dock</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<div class="panel">
+<div class="opening-card">
+<div class="oc-header">
+  <h2>⚓ Team Starting Cards</h2>
+</div>
+<body>
+ <div class="box box-red">
+          <div class="box-label lbl-pink">Team Selector</div>
+          <div class="challenge-text">Select Your Team then enter your members</div>
+          <h1>Next Clue</h1>
+           <div class="oc-ship" style="text-align: center;"><img id="teamLogo" src="" alt="Select a team" style="width:200px; display:none;"></div>
+  </div>
+</body>
+
+            <div class="oc-team-name">
+                <select id="team" onchange="changeImage()">
+                    <option value="">-- Select a Team --</option>
+                    <option value="Team_1">Team 1</option>
+                    <option value="Team_2">Team 2</option>
+                    <option value="Team_3">Team 3</option>
+                    <option value="Team_4">Team 4</option>
+                    <option value="Team_5">Team 5</option>
+                </select>
+
+                <script>
+                    const teamImages = {
+                        Team_1: "images/BlackbeardQR.png",
+                        Team_2: "images/SparrowQR.png",
+                        Team_3: "images/Calico_JackQR.png",
+                        Team_4: "images/HookQR.png",
+                        Team_5: "images/KenwayQR.png"
+                    };
+
+                    function changeImage() {
+                        const select = document.getElementById("team");
+                        const img = document.getElementById("teamLogo");
+                        const selected = select.value;
+
+                        if (selected && teamImages[selected]) {
+                            img.src = teamImages[selected];
+                            img.style.display = "block";
+                        } else {
+                            img.src = "";
+                            img.style.display = "none";
+                         }
+                    }
+                </script>
+<div class="q-grid">
+   
+    </div></div>
+ <input id="score" placeholder="Team Members" style="padding:8px;width:90%;margin:5px;border:1px solid #c9922a;border-radius:6px;">
+
+<button class="miss-btn" onclick="submit()">Submit</button>
+</div>
+</div>
+
+<script>
+const URL = "https://script.google.com/macros/s/AKfycbzu6S8v9JFdyw9-OMdStp7OGdaLEs6hLZ25AMI6bWhw60O8puXTd9QziAKmQ7O6ZPlY/exec";
+
+let t = 0;
+let i;
+
+function start(s){
+  clearInterval(i);
+  t = s;
+
+  i = setInterval(()=>{
+    t--;
+    document.getElementById("timer").innerText =
+      Math.floor(t/60)+":"+String(t%60).padStart(2,"0");
+
+    if(t<=0) clearInterval(i);
+  },1000);
+}
+
+function submit(){
+  fetch(URL,{
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"text/plain"},
+    body:JSON.stringify({
+      team:document.getElementById("team").value,
+      station:"TEAMS",
+      answer:document.getElementById("score").value,  // ← input → answer
+      timeLeft:t
+    })
+  });
+}
+</script>   
+</div>
+</html>
