@@ -19,6 +19,7 @@
           <img id="teamLogo" src="" alt="Select a team" width="150" height="150"  style="display:none;">
           </div>
   </div>
+  <div class="toast" id="toast"></div>
 </body>
                 <select id="team" onchange="changeImage()">
                     <option value="">-- Select a Team --</option>
@@ -101,6 +102,12 @@
 </div>
 
 <script>
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3000);
+}
 const URL = "https://script.google.com/macros/s/AKfycbzu6S8v9JFdyw9-OMdStp7OGdaLEs6hLZ25AMI6bWhw60O8puXTd9QziAKmQ7O6ZPlY/exec";
 
 let t = 0;

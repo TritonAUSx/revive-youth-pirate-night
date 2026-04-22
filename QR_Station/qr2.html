@@ -58,6 +58,12 @@
 </div>
 
 <script>
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3000);
+}
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzu6S8v9JFdyw9-OMdStp7OGdaLEs6hLZ25AMI6bWhw60O8puXTd9QziAKmQ7O6ZPlY/exec";
 const STATION = "QR2";
 
@@ -80,10 +86,10 @@ function submitAnswer() {
     })
   });
 
-  alert("Submitted! ⚓");
+  showToast("Submitted! ⚓");
   
 }
 </script>
-
+<div class="toast" id="toast"></div>
 </body>
 </html>

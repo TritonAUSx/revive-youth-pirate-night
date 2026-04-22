@@ -17,6 +17,7 @@
           <h1>Next Clue</h1>
            <div class="oc-ship" style="text-align: center;"><img id="teamLogo" src="" alt="Select a team" style="width:200px; display:none;"></div>
   </div>
+  <div class="toast" id="toast"></div>
 </body>
 
             <div class="oc-team-name">
@@ -62,6 +63,12 @@
 </div>
 
 <script>
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3000);
+}
 const URL = "https://script.google.com/macros/s/AKfycbzu6S8v9JFdyw9-OMdStp7OGdaLEs6hLZ25AMI6bWhw60O8puXTd9QziAKmQ7O6ZPlY/exec";
 
 let t = 0;
@@ -92,7 +99,7 @@ function submit(){
       timeLeft:t
     })
   });
-  alert("Submitted! ⚓");
+ showToast("Submitted! ⚓");
 }
  
 </script>   
