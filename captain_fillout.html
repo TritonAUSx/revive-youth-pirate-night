@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>🎡 Captain's Trivia</title>
+  <style>
+    .answer-input {
+      font-size: 16px;
+      padding: 10px 12px;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #c9922a;
+      border-radius: 6px;
+      margin-top: 6px;
+    }
+    .q-card { display: flex; flex-direction: column; }
+    .send-btn {
+      display: block;
+      width: 100%;
+      font-size: 18px;
+      padding: 14px;
+      margin-top: 24px;
+      background: #c9922a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    select.team-select {
+      font-size: 16px;
+      padding: 10px 12px;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #c9922a;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+<div class="panel">
+<div class="opening-card">
+  <div class="oc-header">
+    <span class="oc-skull"><img src="images/revive_youth.png" alt="revive-youth" width="75" height="75"></span>
+    <h2> Captain's Quarters (Samuel van Gaalen)</h2>
+  </div>
+
+  <select id="team" class="team-select">
+    <option value="">Select your team...</option>
+    <option>Blackbeard</option>
+    <option>Hook</option>
+    <option>Kenway</option>
+    <option>Calico Jack</option>
+    <option>Sparrow</option>
+  </select>
+
+  <div class="q-grid">
+    <div class="q-card"><span class="q-num">Question 1</span><div class="q-text">What animal swallowed Jonah in the Bible?</div><input class="answer-input" id="a1" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 2</span><div class="q-text">What did Noah build to survive the flood?</div><input class="answer-input" id="a2" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 3</span><div class="q-text">What is the skull and crossbones pirate flag called?</div><input class="answer-input" id="a3" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 4</span><div class="q-text">Who parted the Red Sea? </div><input class="answer-input" id="a4" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 5</span><div class="q-text">What do pirates use to make enemies walk off the edge of the ship?</div><input class="answer-input" id="a5" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 6</span><div class="q-text">Who defeated a giant named Goliath with a sling and a stone?</div><input class="answer-input" id="a6" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 7</span><div class="q-text">What is the name of Captain Hook's enemy? </div><input class="answer-input" id="a7" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 8</span><div class="q-text">What did God place in the sky after Noah's flood as a promise?</div><input class="answer-input" id="a8" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 9</span><div class="q-text">What do pirates keep their gold and jewels in?</div><input class="answer-input" id="a9" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 10</span><div class="q-text">Who was thrown into a lions den in the Bible?</div><input class="answer-input" id="a10" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 11</span><div class="q-text">Which sea did Jesus calm during a storm with his disciples?</div><input class="answer-input" id="a11" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 12</span><div class="q-text">What is the term for a pirate licensed by a government to attack enemy ships?</div><input class="answer-input" id="a12" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 13</span><div class="q-text">Which apostle denied knowing Jesus three times before the rooster crowed?</div><input class="answer-input" id="a13" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 14</span><div class="q-text">What was the name of Sparrow's most famous ship?</div><input class="answer-input" id="a14" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 15</span><div class="q-text">In the Bible, which prophet was thrown overboard to calm a storm at sea?</div><input class="answer-input" id="a15" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 16</span><div class="q-text">What was Blackbeard's real name?</div><input class="answer-input" id="a16" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 17</span><div class="q-text">In which book of the Bible does the apostle Paul survive a famous shipwreck? </div><input class="answer-input" id="a17" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 18</span><div class="q-text">What year did Blackbeard die?</div><input class="answer-input" id="a18" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 19</span><div class="q-text">Which Caribbean island was a famous pirate haven known as the "Republic of Pirates"?</div><input class="answer-input" id="a19" placeholder="Your answer"></div>
+    <div class="q-card"><span class="q-num">Question 20</span><div class="q-text">Who was the first person in the Bible to build a boat, before Noah?</div><input class="answer-input" id="a20" placeholder="Your answer"></div>
+  </div>
+
+  <button class="send-btn" onclick="sendAnswers()">📱 Send Answers to Samuel</button>
+
+</div>
+</div>
+
+<script>
+  // ─── NTFY SETTINGS ──────────────────────────────────────────────
+  // Change this to your own unique topic name (keep it secret-ish)
+  const NTFY_TOPIC = "samuel-captains-trivia-2026"; // ← change this
+  // ────────────────────────────────────────────────────────────────
+
+  async function sendAnswers() {
+    const team = document.getElementById("team").value;
+    if (!team) { alert("Please select your team first!"); return; }
+
+    const answers = [];
+    for (let i = 1; i <= 20; i++) {
+      const val = document.getElementById("a" + i).value.trim() || "—";
+      answers.push(i + ". " + val);
+    }
+
+    const messageBody = "Team: " + team + "\n\n" + answers.join("\n");
+
+    // Send Ntfy notification to your phone
+    try {
+      await fetch("https://ntfy.sh/" + NTFY_TOPIC, {
+        method: "POST",
+        body: messageBody,
+        headers: {
+          "Title": "🏴‍☠️ Galley Answers — " + team,
+          "Priority": "high",
+          "Tags": "pirate"
+        }
+      });
+    } catch (e) {
+      console.warn("Ntfy notification failed:", e);
+    }
+
+    // Also open the SMS as a backup (keep or remove this as you like)
+    const VOLUNTEER_NUMBER = "610433224133";
+    const smsBody = encodeURIComponent("GALLEY ANSWERS\n" + messageBody);
+    window.location.href = "sms:" + VOLUNTEER_NUMBER + "?body=" + smsBody;
+  }
+</script>
+
+</body>
+</html>
