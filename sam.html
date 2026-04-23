@@ -84,10 +84,7 @@
 </div>
 
 <script>
-  // ─── NTFY SETTINGS ──────────────────────────────────────────────
-  // Change this to your own unique topic name (keep it secret-ish)
-  const NTFY_TOPIC = "samuel-captains-trivia-2026"; // ← change this
-  // ────────────────────────────────────────────────────────────────
+  const NTFY_TOPIC = "samuel-captains-trivia-2026"; // ← your topic name
 
   async function sendAnswers() {
     const team = document.getElementById("team").value;
@@ -95,19 +92,18 @@
 
     const answers = [];
     for (let i = 1; i <= 20; i++) {
-      const val = document.getElementById("a" + i).value.trim() || "—";
+      const val = document.getElementById("a" + i).value.trim() || "-";
       answers.push(i + ". " + val);
     }
 
     const messageBody = "Team: " + team + "\n\n" + answers.join("\n");
 
-    // Send Ntfy notification to your phone
     try {
       await fetch("https://ntfy.sh/" + NTFY_TOPIC, {
         method: "POST",
         body: messageBody,
         headers: {
-          "Title": "Galley Answers — " + team,
+          "Title": "Galley Answers - " + team,  // no emojis in headers
           "Priority": "high",
           "Tags": "pirate"
         }
@@ -118,12 +114,6 @@
       alert("Something went wrong. Please try again.");
     }
   }
-
-    // Also open the SMS as a backup (keep or remove this as you like)
-    //const VOLUNTEER_NUMBER = "610433224133";
-    //const smsBody = encodeURIComponent("GALLEY ANSWERS\n" + messageBody);
-    //window.location.href = "sms:" + VOLUNTEER_NUMBER + "?body=" + smsBody;
-  
 </script>
 
 </body>
