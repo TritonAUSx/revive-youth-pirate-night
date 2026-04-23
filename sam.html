@@ -107,14 +107,17 @@
         method: "POST",
         body: messageBody,
         headers: {
-          "Title": "🏴‍☠️ Galley Answers — " + team,
+          "Title": "Galley Answers — " + team,
           "Priority": "high",
           "Tags": "pirate"
         }
       });
+      alert("Answers sent!");
     } catch (e) {
       console.warn("Ntfy notification failed:", e);
+      alert("Something went wrong. Please try again.");
     }
+  }
 
     // Also open the SMS as a backup (keep or remove this as you like)
     //const VOLUNTEER_NUMBER = "610433224133";
