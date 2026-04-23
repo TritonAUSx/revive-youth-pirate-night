@@ -6,10 +6,7 @@
   <title>QR Scanner</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
+    body { margin: 0; padding: 0; }
     .qr-wrapper {
       display: flex;
       flex-direction: column;
@@ -153,7 +150,7 @@
         <p class="qr-subtitle">Point your camera at a QR code</p>
       </div>
 
-      <div class="camera-box" id="camera-box">
+      <div class="camera-box">
         <video id="video" playsinline autoplay muted></video>
         <div class="scanner-line" id="scanner-line" style="display:none"></div>
         <div class="corner tl"></div>
@@ -193,6 +190,12 @@
     document.getElementById("status").textContent = "Starting camera...";
     document.getElementById("scanner-line").style.display = "block";
 
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      document.getElementById("status").textContent = "Error: Camera API not supported on this browser.";
+      document.getElementById("start-btn").style.display = "block";
+      return;
+    }
+
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
       .then(function (stream) {
         const video = document.getElementById("video");
@@ -202,8 +205,8 @@
         document.getElementById("status").textContent = "Scanning...";
         requestAnimationFrame(tick);
       })
-      .catch(function () {
-        document.getElementById("status").textContent = "Camera access denied. Please allow camera permission and try again.";
+      .catch(function (err) {
+        document.getElementById("status").textContent = "Error: " + err.name + " - " + err.message;
         document.getElementById("start-btn").style.display = "block";
         document.getElementById("scanner-line").style.display = "none";
       });
@@ -221,7 +224,9 @@
       const ctx = canvas.getContext("2d");
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, imageData.width, imageData.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: "dontInvert"
+      });
 
       if (code) {
         qrScanning = false;
@@ -231,7 +236,9 @@
       }
     }
 
-    qrAnimFrame = requestAnimationFrame(tick);
+    setTimeout(function () {
+      qrAnimFrame = requestAnimationFrame(tick);
+    }, 100);
   }
 
   function stopCamera() {
