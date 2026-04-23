@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>QR Scanner</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .qr-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+      gap: 20px;
+    }
+    .qr-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #c9922a;
+      text-align: center;
+      margin: 0;
+    }
+    .qr-subtitle {
+      font-size: 14px;
+      color: #888;
+      text-align: center;
+      margin: -12px 0 0;
+    }
+    .camera-box {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 3px solid #c9922a;
+      background: #000;
+      aspect-ratio: 1;
+    }
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .scanner-line {
+      position: absolute;
+      left: 10%;
+      width: 80%;
+      height: 2px;
+      background: #c9922a;
+      opacity: 0.85;
+      top: 0;
+      animation: scan 2s linear infinite;
+      box-shadow: 0 0 8px #c9922a;
+    }
+    @keyframes scan {
+      0%   { top: 10%; }
+      50%  { top: 88%; }
+      100% { top: 10%; }
+    }
+    .corner {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-color: #c9922a;
+      border-style: solid;
+      opacity: 0.9;
+    }
+    .corner.tl { top: 10px; left: 10px; border-width: 3px 0 0 3px; }
+    .corner.tr { top: 10px; right: 10px; border-width: 3px 3px 0 0; }
+    .corner.bl { bottom: 10px; left: 10px; border-width: 0 0 3px 3px; }
+    .corner.br { bottom: 10px; right: 10px; border-width: 0 3px 3px 0; }
+    #start-btn {
+      display: block;
+      width: 100%;
+      max-width: 340px;
+      font-size: 18px;
+      padding: 14px;
+      background: #c9922a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #start-btn:active { opacity: 0.85; }
+    .result-box {
+      display: none;
+      width: 100%;
+      max-width: 340px;
+      background: #1a1a1a;
+      border: 2px solid #c9922a;
+      border-radius: 10px;
+      padding: 16px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .result-box.visible { display: block; }
+    .result-label {
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .result-url {
+      font-size: 15px;
+      color: #c9922a;
+      word-break: break-all;
+      margin-bottom: 14px;
+    }
+    .open-btn {
+      display: inline-block;
+      padding: 10px 28px;
+      background: #c9922a;
+      color: white;
+      border-radius: 6px;
+      font-size: 16px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+    .scan-again-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 20px;
+      background: transparent;
+      color: #c9922a;
+      border: 1px solid #c9922a;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .status {
+      font-size: 13px;
+      color: #888;
+      text-align: center;
+    }
+    #canvas { display: none; }
+  </style>
+</head>
+<body>
+<div class="panel">
+  <div class="opening-card">
+    <div class="qr-wrapper">
+
+      <div>
+        <p class="qr-title">QR Code Scanner</p>
+        <p class="qr-subtitle">Point your camera at a QR code</p>
+      </div>
+
+      <div class="camera-box" id="camera-box">
+        <video id="video" playsinline autoplay muted></video>
+        <div class="scanner-line" id="scanner-line" style="display:none"></div>
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+      </div>
+
+      <canvas id="canvas"></canvas>
+
+      <button id="start-btn">Start Scanner</button>
+
+      <p class="status" id="status"></p>
+
+      <div class="result-box" id="result-box">
+        <div class="result-label">QR Code Detected</div>
+        <div class="result-url" id="result-url"></div>
+        <a id="open-btn" class="open-btn" target="_blank">Open Link</a>
+        <br>
+        <button class="scan-again-btn" id="scan-again-btn">Scan Another</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  let qrScanning = false;
+  let qrAnimFrame = null;
+
+  document.getElementById("start-btn").addEventListener("click", startScanner);
+  document.getElementById("scan-again-btn").addEventListener("click", scanAgain);
+
+  function startScanner() {
+    document.getElementById("start-btn").style.display = "none";
+    document.getElementById("status").textContent = "Starting camera...";
+    document.getElementById("scanner-line").style.display = "block";
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      .then(function (stream) {
+        const video = document.getElementById("video");
+        video.srcObject = stream;
+        video.play();
+        qrScanning = true;
+        document.getElementById("status").textContent = "Scanning...";
+        requestAnimationFrame(tick);
+      })
+      .catch(function () {
+        document.getElementById("status").textContent = "Camera access denied. Please allow camera permission and try again.";
+        document.getElementById("start-btn").style.display = "block";
+        document.getElementById("scanner-line").style.display = "none";
+      });
+  }
+
+  function tick() {
+    if (!qrScanning) return;
+
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+      if (code) {
+        qrScanning = false;
+        stopCamera();
+        showResult(code.data);
+        return;
+      }
+    }
+
+    qrAnimFrame = requestAnimationFrame(tick);
+  }
+
+  function stopCamera() {
+    const video = document.getElementById("video");
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(function (t) { t.stop(); });
+      video.srcObject = null;
+    }
+    document.getElementById("scanner-line").style.display = "none";
+    document.getElementById("status").textContent = "";
+  }
+
+  function showResult(data) {
+    document.getElementById("result-url").textContent = data;
+    const openBtn = document.getElementById("open-btn");
+    if (data.startsWith("http://") || data.startsWith("https://")) {
+      openBtn.href = data;
+      openBtn.style.display = "inline-block";
+    } else {
+      openBtn.style.display = "none";
+    }
+    document.getElementById("result-box").classList.add("visible");
+  }
+
+  function scanAgain() {
+    document.getElementById("result-box").classList.remove("visible");
+    document.getElementById("result-url").textContent = "";
+    document.getElementById("start-btn").style.display = "block";
+  }
+})();
+</script>
+
+</body>
+</html>
