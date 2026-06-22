@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galactic War Room</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #FFE81A;
+    --gold-dim: rgba(255,232,26,0.12);
+    --gold-border: rgba(255,232,26,0.35);
+    --gold-glow: rgba(255,232,26,0.7);
+    --red: #ff3b3b;
+    --red-dim: rgba(255,59,59,0.15);
+    --red-border: rgba(255,59,59,0.45);
+    --rebel: #e05c2a;
+    --rebel-dim: rgba(224,92,42,0.12);
+    --rebel-border: rgba(224,92,42,0.4);
+    --empire: #cccccc;
+    --empire-dim: rgba(204,204,204,0.08);
+    --empire-border: rgba(204,204,204,0.35);
+    --jedi: #3a9bd5;
+    --jedi-dim: rgba(58,155,213,0.12);
+    --jedi-border: rgba(58,155,213,0.4);
+    --sith: #cc0000;
+    --sith-dim: rgba(204,0,0,0.12);
+    --sith-border: rgba(204,0,0,0.4);
+    --mandalorian: #6b8fa8;
+    --mandalorian-dim: rgba(107,143,168,0.12);
+    --mandalorian-border: rgba(107,143,168,0.4);
+    --republic: #4169b8;
+    --republic-dim: rgba(65,105,184,0.12);
+    --republic-border: rgba(65,105,184,0.4);
+    --nightsisters: #7b2d8b;
+    --nightsisters-dim: rgba(123,45,139,0.12);
+    --nightsisters-border: rgba(123,45,139,0.4);
+    --bg: #000;
+    --panel-bg: rgba(0,0,0,0.97);
+    --text: #FFE81A;
+    --text-dim: rgba(255,232,26,0.45);
+
+    --hud-size: clamp(14px, 2.2vw, 28px);
+    --hud-sub: clamp(9px, 0.9vw, 13px);
+    --nav-size: clamp(9px, 0.85vw, 13px);
+    --status-size: clamp(9px, 0.75vw, 12px);
+    --round-label: clamp(9px, 0.8vw, 13px);
+    --team-name: clamp(13px, 1.3vw, 20px);
+    --team-score: clamp(14px, 1.4vw, 22px);
+    --match-status: clamp(9px, 0.75vw, 12px);
+    --card-pad: clamp(10px, 1.1vw, 18px);
+    --card-width: clamp(160px, 16vw, 280px);
+    --col-gap: clamp(28px, 4vw, 72px);
+    --score-val: clamp(32px, 5vw, 72px);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Orbitron', 'Courier New', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  #stars { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden; }
+  .star { position:absolute; background:#fff; border-radius:50%; animation:twinkle linear infinite; }
+  @keyframes twinkle { 0%,100%{opacity:0.1} 50%{opacity:1} }
+
+  body::after {
+    content:''; position:fixed; inset:0;
+    background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);
+    pointer-events:none; z-index:999;
+  }
+
+  .hud,.nav,.statusbar,.view,.overlay { position:relative; z-index:1; }
+
+  /* HUD */
+  .hud {
+    text-align:center;
+    padding: clamp(12px,1.8vh,28px) 20px clamp(10px,1.4vh,22px);
+    border-bottom:1px solid var(--gold-border);
+    position:relative;
+  }
+  .hud-title {
+    font-size:var(--hud-size); font-weight:900;
+    letter-spacing:clamp(4px,0.8vw,10px);
+    color:var(--gold);
+    text-shadow:0 0 20px var(--gold-glow),0 0 40px rgba(255,232,26,0.25);
+    animation:flicker 6s infinite;
+  }
+  .hud-sub { font-size:var(--hud-sub); letter-spacing:clamp(2px,0.5vw,5px); color:var(--text-dim); margin-top:clamp(2px,0.4vh,6px); font-family:'Courier New',monospace; }
+  @keyframes flicker { 0%,95%,100%{opacity:1} 96%{opacity:0.85} 97%{opacity:1} 98%{opacity:0.7} 99%{opacity:1} }
+  .hud-corner { position:absolute; top:50%; transform:translateY(-50%); font-size:clamp(14px,1.6vw,24px); color:var(--text-dim); animation:spin 12s linear infinite; }
+  .hud-corner.left { left:clamp(10px,2vw,32px); }
+  .hud-corner.right { right:clamp(10px,2vw,32px); animation-direction:reverse; }
+  @keyframes spin { from{transform:translateY(-50%) rotate(0deg)} to{transform:translateY(-50%) rotate(360deg)} }
+
+  /* NAV */
+  .nav { display:flex; justify-content:center; gap:clamp(6px,1vw,14px); padding:clamp(8px,1vh,14px) 16px; border-bottom:1px solid var(--gold-border); flex-wrap:wrap; }
+  .nav button {
+    background:transparent; border:1px solid var(--gold-border); color:var(--text-dim);
+    font-family:'Orbitron',monospace; font-size:var(--nav-size); letter-spacing:clamp(1px,0.3vw,3px);
+    padding:clamp(6px,0.7vh,10px) clamp(10px,1.2vw,20px); cursor:pointer; transition:all 0.2s; text-transform:uppercase; white-space:nowrap;
+  }
+  .nav button:hover,.nav button.active { color:var(--gold); border-color:var(--gold); text-shadow:0 0 10px var(--gold-glow); background:var(--gold-dim); box-shadow:0 0 12px rgba(255,232,26,0.15); }
+  .nav button.danger { border-color:var(--red-border); color:rgba(255,59,59,0.5); }
+  .nav button.danger:hover { color:var(--red); border-color:var(--red); background:var(--red-dim); text-shadow:0 0 10px rgba(255,59,59,0.7); }
+
+  /* STATUS */
+  .statusbar { text-align:center; font-size:var(--status-size); letter-spacing:clamp(1px,0.25vw,3px); color:var(--text-dim); padding:clamp(4px,0.5vh,8px); border-bottom:1px solid rgba(255,232,26,0.08); font-family:'Courier New',monospace; }
+
+  /* VIEWS */
+  .view { display:none; padding:clamp(16px,2.5vh,36px) clamp(12px,2vw,32px); }
+  .view.active { display:block; }
+
+  /* BRACKET */
+  .bracket-scroll { overflow-x:auto; overflow-y:visible; padding-bottom:12px; -webkit-overflow-scrolling:touch; }
+  .bracket-scroll::-webkit-scrollbar { height:4px; }
+  .bracket-scroll::-webkit-scrollbar-track { background:rgba(255,232,26,0.05); }
+  .bracket-scroll::-webkit-scrollbar-thumb { background:var(--gold-border); border-radius:2px; }
+
+  #bracket { display:flex; gap:var(--col-gap); min-width:max-content; position:relative; align-items:stretch; }
+
+  .round-column { display:flex; flex-direction:column; width:var(--card-width); flex-shrink:0; position:relative; z-index:1; }
+  .round-title { font-size:var(--round-label); letter-spacing:clamp(2px,0.4vw,5px); color:var(--text-dim); text-align:center; padding-bottom:clamp(8px,1vh,14px); border-bottom:1px solid var(--gold-border); margin-bottom:clamp(12px,1.8vh,24px); text-transform:uppercase; }
+  .matches-col { display:flex; flex-direction:column; justify-content:space-around; flex:1; gap:clamp(10px,1.5vh,20px); }
+
+  .match-node { border:1px solid var(--gold-border); padding:var(--card-pad); cursor:pointer; transition:all 0.2s; position:relative; background:rgba(255,232,26,0.02); overflow:hidden; }
+  .match-node::before { content:''; position:absolute; top:0; left:-60%; width:60%; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); animation:scanline 4s linear infinite; }
+  @keyframes scanline { 0%{left:-60%;top:0%} 100%{left:160%;top:100%} }
+  .match-node::after { content:''; position:absolute; bottom:0; right:0; width:clamp(6px,0.6vw,10px); height:clamp(6px,0.6vw,10px); border-bottom:1px solid var(--gold); border-right:1px solid var(--gold); opacity:0.5; }
+  .match-node:hover { border-color:var(--gold); background:var(--gold-dim); box-shadow:0 0 16px rgba(255,232,26,0.15); }
+  .match-node.win { border-color:var(--gold); box-shadow:0 0 14px rgba(255,232,26,0.3); }
+
+  .match-team { font-size:var(--team-name); letter-spacing:clamp(0px,0.1vw,2px); padding:clamp(3px,0.4vh,6px) 0; display:flex; justify-content:space-between; align-items:center; gap:8px; font-family:'Courier New',monospace; }
+  .match-team+.match-team { border-top:1px solid rgba(255,232,26,0.1); margin-top:clamp(3px,0.4vh,6px); padding-top:clamp(6px,0.8vh,10px); }
+  .match-team .name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .match-team .score { font-size:var(--team-score); font-weight:bold; min-width:clamp(16px,1.5vw,28px); text-align:right; }
+  .match-team.winner .name,.match-team.winner .score { color:var(--gold); text-shadow:0 0 8px var(--gold-glow); }
+  .match-team.loser { color:var(--text-dim); }
+  .match-status { font-size:var(--match-status); letter-spacing:clamp(1px,0.2vw,3px); color:var(--text-dim); margin-top:clamp(4px,0.6vh,8px); text-align:right; font-family:'Courier New',monospace; }
+  .match-status.done { color:var(--gold); }
+
+  .bracket-svg { position:absolute; top:0; left:0; pointer-events:none; z-index:0; }
+  @keyframes saberDraw { from{stroke-dashoffset:2000;opacity:0} to{stroke-dashoffset:0;opacity:1} }
+  .bracket-line { stroke-dasharray:2000; stroke-dashoffset:2000; animation:saberDraw 0.5s ease forwards; }
+
+  /* OVERLAY / PANEL */
+  .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.92); display:flex; align-items:center; justify-content:center; z-index:100; padding:16px; }
+  .overlay.hidden { display:none; }
+  .panel { border:1px solid var(--gold); padding:clamp(20px,3vh,40px) clamp(20px,3vw,48px); width:min(480px,96vw); background:var(--panel-bg); text-align:center; box-shadow:0 0 40px rgba(255,232,26,0.15); position:relative; }
+  .panel::before { content:''; position:absolute; top:-1px; left:-1px; width:clamp(10px,1.2vw,16px); height:clamp(10px,1.2vw,16px); border-top:2px solid var(--gold); border-left:2px solid var(--gold); }
+  .panel::after { content:''; position:absolute; bottom:-1px; right:-1px; width:clamp(10px,1.2vw,16px); height:clamp(10px,1.2vw,16px); border-bottom:2px solid var(--gold); border-right:2px solid var(--gold); }
+  .panel h2 { font-size:clamp(11px,1.4vw,18px); letter-spacing:clamp(2px,0.4vw,5px); margin-bottom:clamp(16px,2.5vh,32px); color:var(--gold); text-shadow:0 0 12px var(--gold-glow); }
+  .scorebox { display:grid; grid-template-columns:1fr 1fr; gap:clamp(12px,2vw,28px); margin-bottom:clamp(16px,2.5vh,28px); }
+  .score-side { display:flex; flex-direction:column; align-items:center; gap:clamp(6px,0.8vh,12px); }
+  .score-side h3 { font-size:clamp(9px,0.9vw,13px); letter-spacing:2px; color:var(--text-dim); }
+  .score-val { font-size:var(--score-val); font-weight:900; line-height:1; text-shadow:0 0 20px var(--gold-glow); }
+  .score-btns { display:flex; gap:clamp(6px,0.6vw,10px); }
+  .score-btns button,.panel-btn { background:transparent; border:1px solid var(--gold-border); color:var(--gold); font-family:'Orbitron',monospace; font-size:clamp(14px,1.4vw,20px); width:clamp(34px,3.5vw,50px); height:clamp(34px,3.5vw,50px); cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
+  .score-btns button:hover,.panel-btn:hover { background:var(--gold-dim); border-color:var(--gold); box-shadow:0 0 10px rgba(255,232,26,0.2); }
+  .panel-actions { display:flex; gap:clamp(8px,1vw,16px); justify-content:center; flex-wrap:wrap; }
+  .panel-btn { font-size:clamp(9px,0.9vw,13px); letter-spacing:2px; padding:clamp(8px,1vh,14px) clamp(14px,1.8vw,26px); width:auto; height:auto; }
+  .btn-submit { border-color:var(--gold) !important; }
+  .btn-exit { border-color:var(--red-border) !important; color:rgba(255,59,59,0.6) !important; }
+  .btn-exit:hover { border-color:var(--red) !important; color:var(--red) !important; background:var(--red-dim) !important; }
+  #panel-result { margin-top:clamp(10px,1.5vh,18px); font-size:clamp(9px,0.9vw,13px); letter-spacing:3px; color:var(--gold); min-height:20px; text-shadow:0 0 8px var(--gold-glow); font-family:'Courier New',monospace; }
+
+  /* ── TEAMS PAGE ── */
+  #teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(clamp(240px, 22vw, 360px), 1fr));
+    gap: clamp(14px, 2vw, 28px);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .team-card {
+    border: 1px solid var(--gold-border);
+    background: rgba(255,232,26,0.02);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .team-card::before { content:''; position:absolute; top:0; left:-60%; width:60%; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); animation:scanline 5s linear infinite; }
+  .team-card:hover { border-color:var(--gold); box-shadow:0 0 20px rgba(255,232,26,0.12); }
+
+  .team-card.rebel { border-color:var(--rebel-border); }
+  .team-card.rebel:hover { border-color:var(--rebel); box-shadow:0 0 20px rgba(79,195,247,0.15); }
+  .team-card.empire { border-color:var(--empire-border); }
+  .team-card.empire:hover { border-color:var(--empire); box-shadow:0 0 20px rgba(204,51,51,0.15); }
+
+  .team-card.jedi { border-color: var(--jedi-border); }
+  .team-card.jedi:hover { border-color: var(--jedi); box-shadow: 0 0 20px rgba(58,155,213,0.15); }
+  .team-card.jedi .team-card-name { color: var(--jedi); text-shadow: 0 0 8px rgba(58,155,213,0.6); }
+  .faction-badge.jedi { color: var(--jedi); border-color: var(--jedi-border); background: var(--jedi-dim); }
+  .team-card.jedi .player-icon { border-color: var(--jedi-border); color: var(--jedi); }
+  .team-card.jedi .team-count { border-top-color: rgba(58,155,213,0.08); }
+
+  .team-card.sith { border-color: var(--sith-border); }
+  .team-card.sith:hover { border-color: var(--sith); box-shadow: 0 0 20px rgba(204,0,0,0.18); }
+  .team-card.sith .team-card-name { color: var(--sith); text-shadow: 0 0 8px rgba(204,0,0,0.7); }
+  .faction-badge.sith { color: var(--sith); border-color: var(--sith-border); background: var(--sith-dim); }
+  .team-card.sith .player-icon { border-color: var(--sith-border); color: var(--sith); }
+  .team-card.sith .team-count { border-top-color: rgba(204,0,0,0.08); }
+
+  .team-card.mandalorian { border-color: var(--mandalorian-border); }
+  .team-card.mandalorian:hover { border-color: var(--mandalorian); box-shadow: 0 0 20px rgba(107,143,168,0.15); }
+  .team-card.mandalorian .team-card-name { color: var(--mandalorian); text-shadow: 0 0 8px rgba(107,143,168,0.6); }
+  .faction-badge.mandalorian { color: var(--mandalorian); border-color: var(--mandalorian-border); background: var(--mandalorian-dim); }
+  .team-card.mandalorian .player-icon { border-color: var(--mandalorian-border); color: var(--mandalorian); }
+  .team-card.mandalorian .team-count { border-top-color: rgba(107,143,168,0.08); }
+
+  .team-card.republic { border-color: var(--republic-border); }
+  .team-card.republic:hover { border-color: var(--republic); box-shadow: 0 0 20px rgba(65,105,184,0.15); }
+  .team-card.republic .team-card-name { color: var(--republic); text-shadow: 0 0 8px rgba(65,105,184,0.6); }
+  .faction-badge.republic { color: var(--republic); border-color: var(--republic-border); background: var(--republic-dim); }
+  .team-card.republic .player-icon { border-color: var(--republic-border); color: var(--republic); }
+  .team-card.republic .team-count { border-top-color: rgba(65,105,184,0.08); }
+
+  .team-card.nightsisters { border-color: var(--nightsisters-border); }
+  .team-card.nightsisters:hover { border-color: var(--nightsisters); box-shadow: 0 0 20px rgba(123,45,139,0.18); }
+  .team-card.nightsisters .team-card-name { color: var(--nightsisters); text-shadow: 0 0 8px rgba(123,45,139,0.7); }
+  .faction-badge.nightsisters { color: var(--nightsisters); border-color: var(--nightsisters-border); background: var(--nightsisters-dim); }
+  .team-card.nightsisters .player-icon { border-color: var(--nightsisters-border); color: var(--nightsisters); }
+  .team-card.nightsisters .team-count { border-top-color: rgba(123,45,139,0.08); }
+
+  .team-card-header {
+    padding: clamp(12px,1.5vw,20px) clamp(14px,1.6vw,22px) clamp(10px,1.2vw,16px);
+    border-bottom: 1px solid rgba(255,232,26,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .team-card.rebel .team-card-header { border-bottom-color: rgba(79,195,247,0.15); }
+  .team-card.empire .team-card-header { border-bottom-color: rgba(204,51,51,0.15); }
+
+  .team-card-name {
+    font-size: clamp(12px, 1.3vw, 19px);
+    font-weight: 700;
+    letter-spacing: clamp(1px,0.2vw,3px);
+    color: var(--gold);
+    text-shadow: 0 0 8px var(--gold-glow);
+  }
+  .team-card.rebel .team-card-name { color: var(--rebel); text-shadow: 0 0 8px rgba(79,195,247,0.6); }
+  .team-card.empire .team-card-name { color: var(--empire); text-shadow: 0 0 8px rgba(204,51,51,0.6); }
+
+  .faction-badge {
+    font-size: clamp(8px, 0.7vw, 11px);
+    letter-spacing: clamp(1px, 0.2vw, 3px);
+    padding: clamp(3px,0.3vh,5px) clamp(7px,0.7vw,12px);
+    border: 1px solid;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-family: 'Courier New', monospace;
+  }
+  .faction-badge.rebel { color:var(--rebel); border-color:var(--rebel-border); background:var(--rebel-dim); }
+  .faction-badge.empire { color:var(--empire); border-color:var(--empire-border); background:var(--empire-dim); }
+  .faction-badge.other { color:var(--text-dim); border-color:rgba(255,232,26,0.2); }
+
+  .team-card-players { padding: clamp(10px,1.2vw,18px) clamp(14px,1.6vw,22px); }
+  .player-row {
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 0.8vw, 14px);
+    padding: clamp(5px, 0.6vh, 9px) 0;
+    border-bottom: 1px solid rgba(255,232,26,0.06);
+    font-family: 'Courier New', monospace;
+    font-size: clamp(11px, 1.1vw, 16px);
+    color: rgba(255,232,26,0.8);
+    letter-spacing: 1px;
+  }
+  .player-row:last-child { border-bottom: none; }
+  .player-icon {
+    width: clamp(18px, 1.8vw, 26px);
+    height: clamp(18px, 1.8vw, 26px);
+    border: 1px solid var(--gold-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(8px, 0.75vw, 11px);
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .team-card.rebel .player-icon { border-color: var(--rebel-border); color: var(--rebel); }
+  .team-card.empire .player-icon { border-color: var(--empire-border); color: var(--empire); }
+
+  .team-count {
+    font-size: clamp(8px, 0.7vw, 11px);
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    font-family: 'Courier New', monospace;
+    padding: clamp(6px,0.8vh,10px) clamp(14px,1.6vw,22px);
+    border-top: 1px solid rgba(255,232,26,0.06);
+  }
+  .team-card.rebel .team-count { border-top-color: rgba(79,195,247,0.08); }
+  .team-card.empire .team-count { border-top-color: rgba(204,51,51,0.08); }
+
+  /* CHAMPIONS */
+  #champions-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(clamp(150px,16vw,220px),1fr)); gap:clamp(10px,1.5vw,20px); max-width:1000px; margin:0 auto; }
+  .champ-card { border:1px solid var(--gold-border); padding:clamp(14px,2vh,24px) clamp(12px,1.5vw,20px); text-align:center; background:rgba(255,232,26,0.02); position:relative; }
+  .champ-card::before { content:'✦'; position:absolute; top:8px; left:10px; font-size:clamp(7px,0.7vw,10px); color:var(--text-dim); }
+  .champ-card::after { content:'✦'; position:absolute; top:8px; right:10px; font-size:clamp(7px,0.7vw,10px); color:var(--text-dim); }
+  .champ-card h2 { font-size:clamp(11px,1.2vw,17px); letter-spacing:2px; margin-bottom:8px; text-shadow:0 0 8px var(--gold-glow); }
+  .champ-card p { font-size:clamp(9px,0.8vw,12px); color:var(--text-dim); letter-spacing:2px; font-family:'Courier New',monospace; }
+
+  .empty-msg { text-align:center; color:var(--text-dim); font-size:clamp(10px,1vw,15px); letter-spacing:3px; padding:clamp(30px,5vh,60px); font-family:'Courier New',monospace; }
+
+  .pulse { display:inline-block; width:clamp(4px,0.4vw,7px); height:clamp(4px,0.4vw,7px); background:var(--gold); border-radius:50%; margin-right:6px; vertical-align:middle; animation:pulse 1.5s ease-in-out infinite; box-shadow:0 0 6px var(--gold-glow); }
+  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.5} }
+
+  @media (max-width:600px) {
+    .hud-corner { display:none; }
+    .hud-title { letter-spacing:3px; }
+    .bracket-scroll { padding-bottom:16px; }
+    .nav { gap:5px; }
+    .nav button { padding:7px 10px; font-size:8px; letter-spacing:1px; }
+  }
+
+  .champ-card.clickable { cursor: pointer; }
+  .champ-card.clickable:hover { border-color: var(--gold); box-shadow: 0 0 16px rgba(255,232,26,0.15); background: var(--gold-dim); }
+  .champ-hint { font-size: clamp(8px,0.7vw,10px); letter-spacing: 2px; color: var(--text-dim); margin-top: 8px; font-family: 'Courier New', monospace; }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<div class="hud">
+  <span class="hud-corner left">✦</span>
+  <div class="hud-title">GALACTIC WAR ROOM</div>
+  <div class="hud-sub">NERF COMBAT TOURNAMENT · TACTICAL DISPLAY</div>
+  <span class="hud-corner right">✦</span>
+</div>
+
+<div class="nav">
+  <button class="active" onclick="showView('bracket-view',this)">BRACKET</button>
+  <button onclick="showView('teams-view',this)">SQUADRONS</button>
+  <button onclick="showView('champions-view',this)">HALL OF CHAMPIONS</button>
+  <button class="danger" onclick="confirmReset()">RESET SEASON</button>
+</div>
+
+<div class="statusbar" id="statusbar"><span class="pulse"></span>INITIALISING TACTICAL SYSTEMS...</div>
+
+<div id="bracket-view" class="view active">
+  <div class="bracket-scroll">
+    <div id="bracket"></div>
+  </div>
+</div>
+
+<div id="teams-view" class="view">
+  <div id="teams-grid"></div>
+</div>
+
+<div id="champions-view" class="view">
+  <div id="champions-grid"></div>
+</div>
+
+<div id="overlay" class="overlay hidden">
+  <div class="panel" id="panel-content"></div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbzEv58oR8e6yllMJiGo1eMjfYKx5jPrJbm-eFNCXgXGXcIV1js71NpqBlfQr-RFx1fh/exec";
+
+/* STARFIELD */
+(function(){
+  const el = document.getElementById('stars');
+  for(let i=0;i<140;i++){
+    const s = document.createElement('div');
+    s.className='star';
+    const size = Math.random()*2.5+0.5;
+    s.style.cssText=`width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-duration:${2+Math.random()*5}s;animation-delay:${Math.random()*5}s;`;
+    el.appendChild(s);
+  }
+})();
+
+let appData = { matches:[] };
+let lastState = "";
+let tempScores = {};
+
+/* NAV */
+function showView(id, btn) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav button:not(.danger)').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='champions-view') loadChampions();
+  if(id==='teams-view') loadTeams();
+}
+
+/* API */
+async function fetchMatches() { return (await fetch(API_URL+"?action=getMatches")).json(); }
+async function updateScore(id,a,b) { return (await fetch(`${API_URL}?action=updateScore&id=${id}&scoreA=${a}&scoreB=${b}`)).json(); }
+async function fetchChampions() { return (await fetch(API_URL+"?action=getChampions")).json(); }
+async function fetchTeams() { return (await fetch(API_URL+"?action=getTeams")).json(); }
+
+/* SYNC */
+function init() { sync(); setInterval(sync,2500); }
+
+async function sync() {
+  try {
+    const matches = await fetchMatches();
+    if(!matches||!Array.isArray(matches)) return;
+    const state = JSON.stringify(matches);
+    if(state!==lastState){ lastState=state; appData.matches=matches; renderBracket(); }
+    setStatus(`<span class="pulse"></span>LIVE · ${matches.length} ENGAGEMENTS · SYNCED ${new Date().toLocaleTimeString()}`);
+  } catch(e) {
+    setStatus(`<span class="pulse" style="background:var(--red)"></span>SIGNAL LOST · ${e.message}`);
+  }
+}
+
+function setStatus(msg){ document.getElementById('statusbar').innerHTML=msg; }
+
+/* BRACKET */
+function renderBracket() {
+  const el = document.getElementById("bracket");
+  el.innerHTML=""; el.style.position="relative";
+  if(!appData.matches.length){ el.innerHTML='<div class="empty-msg">NO COMBATANTS DETECTED — AWAITING ORDERS</div>'; return; }
+
+  const rounds = groupByRound(appData.matches);
+  const sortedRounds = Object.keys(rounds).sort((a,b)=>Number(a)-Number(b));
+  const cols=[];
+  const labels={1:"FIRST STRIKE",2:"SKIRMISH",3:"THE FINAL DUEL"};
+
+  sortedRounds.forEach(r=>{
+    const col=document.createElement("div"); col.className="round-column";
+    const title=document.createElement("div"); title.className="round-title";
+    title.textContent=labels[r]||`ROUND ${r}`; col.appendChild(title);
+    const matchesCol=document.createElement("div"); matchesCol.className="matches-col";
+
+    rounds[r].forEach(m=>{
+      const node=document.createElement("div");
+      node.className="match-node"+(m.winner?" win":"");
+      node.onclick=()=>openMatch(m.id);
+      const hasScores=m.scoreA!=null&&m.scoreA!==""&&m.scoreB!=null&&m.scoreB!=="";
+      const aWon=hasScores&&Number(m.scoreA)>Number(m.scoreB);
+      const bWon=hasScores&&Number(m.scoreB)>Number(m.scoreA);
+      node.innerHTML=`
+        <div class="match-team ${aWon?'winner':bWon?'loser':''}">
+          <span class="name">${m.teamA||'—'}</span>
+          <span class="score">${hasScores?m.scoreA:''}</span>
+        </div>
+        <div class="match-team ${bWon?'winner':aWon?'loser':''}">
+          <span class="name">${m.teamB||'—'}</span>
+          <span class="score">${hasScores?m.scoreB:''}</span>
+        </div>
+        <div class="match-status ${m.winner?'done':''}">${m.winner?'✦ '+m.winner:'STANDING BY'}</div>`;
+      matchesCol.appendChild(node);
+    });
+
+    col.appendChild(matchesCol); el.appendChild(col); cols.push({col,round:r});
+  });
+  requestAnimationFrame(()=>drawLines(el,cols));
+}
+
+function groupByRound(matches){ const g={}; matches.forEach(m=>{if(!g[m.round])g[m.round]=[];g[m.round].push(m);}); return g; }
+
+function drawLines(el,cols){
+  const existing=el.querySelector(".bracket-svg"); if(existing) existing.remove();
+  const W=el.scrollWidth,H=el.scrollHeight; if(!W||!H) return;
+  const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.setAttribute("width",W); svg.setAttribute("height",H); svg.classList.add("bracket-svg");
+  const elRect=el.getBoundingClientRect(); let delay=0;
+
+  for(let ci=0;ci<cols.length-1;ci++){
+    const leftNodes=cols[ci].col.querySelectorAll(".match-node");
+    const rightNodes=cols[ci+1].col.querySelectorAll(".match-node");
+    rightNodes.forEach((rightNode,ri)=>{
+      [leftNodes[ri*2],leftNodes[ri*2+1]].forEach(src=>{
+        if(!src) return;
+        const s=src.getBoundingClientRect(),d=rightNode.getBoundingClientRect();
+        const x1=s.right-elRect.left,y1=s.top+s.height/2-elRect.top;
+        const x2=d.left-elRect.left,y2=d.top+d.height/2-elRect.top;
+        const mx=(x1+x2)/2;
+        const isWin=src.classList.contains('win');
+        if(isWin){
+          const glow=document.createElementNS("http://www.w3.org/2000/svg","path");
+          glow.setAttribute("d",`M ${x1} ${y1} H ${mx} V ${y2} H ${x2}`);
+          glow.setAttribute("fill","none"); glow.setAttribute("stroke","rgba(255,232,26,0.15)"); glow.setAttribute("stroke-width","8");
+          glow.classList.add("bracket-line"); glow.style.animationDelay=`${delay}s`; svg.appendChild(glow);
+        }
+        const path=document.createElementNS("http://www.w3.org/2000/svg","path");
+        path.setAttribute("d",`M ${x1} ${y1} H ${mx} V ${y2} H ${x2}`);
+        path.setAttribute("fill","none"); path.setAttribute("stroke",isWin?"#FFE81A":"rgba(255,232,26,0.3)"); path.setAttribute("stroke-width",isWin?"2":"1");
+        path.classList.add("bracket-line"); path.style.animationDelay=`${delay}s`; svg.appendChild(path);
+        delay+=0.07;
+      });
+    });
+  }
+  el.appendChild(svg);
+}
+
+window.addEventListener("resize",()=>{ if(appData.matches.length) renderBracket(); });
+
+/* MATCH PANEL */
+function openMatch(id){
+  const match=appData.matches.find(m=>m.id==id); if(!match) return;
+  if(!tempScores[id]) tempScores[id]={ a:match.scoreA!=null&&match.scoreA!==""?Number(match.scoreA):0, b:match.scoreB!=null&&match.scoreB!==""?Number(match.scoreB):0 };
+  renderPanel(match,id);
+  document.getElementById("overlay").classList.remove("hidden");
+}
+
+function renderPanel(match,id){
+  const s=tempScores[id];
+  document.getElementById("panel-content").innerHTML=`
+    <h2>${match.teamA||'—'} VS ${match.teamB||'—'}</h2>
+    <div class="scorebox">
+      <div class="score-side">
+        <h3>${match.teamA||'—'}</h3>
+        <div class="score-val" id="score-a">${s.a}</div>
+        <div class="score-btns">
+          <button onclick="changeScore('${id}','a',-1)">−</button>
+          <button onclick="changeScore('${id}','a',1)">+</button>
+        </div>
+      </div>
+      <div class="score-side">
+        <h3>${match.teamB||'—'}</h3>
+        <div class="score-val" id="score-b">${s.b}</div>
+        <div class="score-btns">
+          <button onclick="changeScore('${id}','b',-1)">−</button>
+          <button onclick="changeScore('${id}','b',1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel-actions">
+      <button class="panel-btn btn-submit" onclick="submitMatch('${id}')">CONFIRM RESULT</button>
+      <button class="panel-btn btn-exit" onclick="closeMatch()">ABORT</button>
+    </div>
+    <div id="panel-result"></div>`;
+}
+
+function changeScore(id,team,val){ tempScores[id][team]=Math.max(0,tempScores[id][team]+val); document.getElementById("score-"+team).textContent=tempScores[id][team]; }
+
+async function submitMatch(id){
+  const s=tempScores[id];
+  document.getElementById("panel-result").textContent="TRANSMITTING...";
+  try {
+    await updateScore(id,s.a,s.b);
+    document.getElementById("panel-result").textContent="✦ RESULT CONFIRMED";
+    delete tempScores[id];
+    setTimeout(()=>{ closeMatch(); sync(); },1200);
+  } catch(e){ document.getElementById("panel-result").textContent="TRANSMISSION FAILED: "+e.message; }
+}
+
+function closeMatch(){ document.getElementById("overlay").classList.add("hidden"); }
+
+/* TEAMS */
+async function loadTeams(){
+  const el=document.getElementById("teams-grid");
+  el.innerHTML='<div class="empty-msg">SCANNING FOR SQUADRONS...</div>';
+  try {
+    const data=await fetchTeams();
+    if(!data||!data.length){ el.innerHTML='<div class="empty-msg">NO SQUADRONS ON RECORD</div>'; return; }
+
+    el.innerHTML=data.map(t=>{
+      const factionKey = t.faction ? t.faction.toLowerCase().trim() : 'other';
+      const factionClass = ['rebel','empire','jedi','sith','mandolorians','republic','nightsisters'].includes(factionKey) ? factionKey : 'other';
+      const icons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', republic:'◆', nightsisters:'✦', other:'✦' };
+      const icon = icons[factionClass];
+
+      const playerRows = t.players.map((p,i)=>`
+        <div class="player-row">
+          <div class="player-icon">${i+1}</div>
+          ${p}
+        </div>`).join('');
+
+      return `
+        <div class="team-card ${factionClass}">
+          <div class="team-card-header">
+            <div class="team-card-name">${icons[factionClass]||'✦'} ${t.team}</div>
+            <div class="faction-badge ${factionClass}">${t.faction||'UNKNOWN'}</div>
+        </div>
+        <div class="team-card-players">${playerRows||'<div class="player-row" style="color:var(--text-dim)">NO PLAYERS LISTED</div>'}</div>
+        <div class="team-count">
+          ${t.season ? `<span style="color:var(--gold);opacity:0.6">${t.season}</span> · ` : ''}
+          ${t.players.length} OPERATIVE${t.players.length!==1?'S':''}
+          </div>
+        </div>`;
+    }).join('');
+  } catch(e){
+    el.innerHTML=`<div class="empty-msg">SCAN FAILED · ${e.message}</div>`;
+  }
+}
+
+/* CHAMPIONS */
+async function loadChampions(){
+  const el=document.getElementById("champions-grid");
+  el.innerHTML='<div class="empty-msg">ACCESSING IMPERIAL ARCHIVES...</div>';
+  try {
+    const [champions, teams] = await Promise.all([fetchChampions(), fetchTeams()]);
+    if(!champions||!champions.length){ el.innerHTML='<div class="empty-msg">NO CHAMPIONS ON RECORD</div>'; return; }
+
+    el.innerHTML=champions.map(c=>{
+      const teamData = teams ? teams.find(t => t.team === c.team && t.season === c.season) : null;
+      const hasRoster = teamData && teamData.players && teamData.players.length;
+      return `
+        <div class="champ-card ${hasRoster?'clickable':''}" ${hasRoster?`onclick="openChampRoster(${JSON.stringify(c).replace(/"/g,'&quot;')}, ${JSON.stringify(teamData).replace(/"/g,'&quot;')})"`:''}>
+          <h2>${c.team}</h2>
+          <p>${c.season}</p>
+          ${hasRoster?'<p class="champ-hint">TAP TO VIEW ROSTER</p>':''}
+        </div>`;
+    }).join('');
+  } catch(e){ el.innerHTML=`<div class="empty-msg">ARCHIVE ACCESS DENIED · ${e.message}</div>`; }
+}
+
+/* RESET */
+async function confirmReset(){
+  if(!confirm("Reset the season? All match data will be cleared. Champions will be kept.")) return;
+  try {
+    await fetch(API_URL+"?action=resetSeason");
+    appData.matches=[]; lastState="";
+    document.getElementById("bracket").innerHTML='<div class="empty-msg">SEASON RESET — AWAITING NEW COMBATANTS</div>';
+    setStatus('<span class="pulse"></span>SEASON RESET COMPLETE');
+  } catch(e){ setStatus(`<span class="pulse" style="background:var(--red)"></span>RESET FAILED · ${e.message}`); }
+}
+function openChampRoster(champ, teamData){
+  const factionKey = teamData.faction ? teamData.faction.toLowerCase().trim() : 'other';
+  const factionClass = ['rebel','empire','jedi','sith','mandolorians','republic','nightsisters'].includes(factionKey) ? factionKey : 'other';
+  const icons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', republic:'◆', nightsisters:'✦', other:'✦' };
+  const playerRows = teamData.players.map((p,i)=>`
+    <div class="player-row">
+      <div class="player-icon">${i+1}</div>
+      ${p}
+    </div>`).join('');
+
+  document.getElementById("panel-content").innerHTML=`
+    <h2>${icons[factionClass]} ${champ.team}</h2>
+    <p style="font-size:clamp(9px,0.9vw,13px);letter-spacing:3px;color:var(--text-dim);margin-bottom:clamp(16px,2.5vh,28px);font-family:'Courier New',monospace;">${champ.season} CHAMPIONS</p>
+    <div style="text-align:left;margin-bottom:clamp(16px,2.5vh,28px);">
+      ${playerRows}
+    </div>
+    <div class="panel-actions">
+      <button class="panel-btn btn-exit" onclick="closeMatch()">CLOSE</button>
+    </div>`;
+
+  document.getElementById("overlay").classList.remove("hidden");
+}
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeMatch(); });
+
+init();
+</script>
+</body>
+</html>
