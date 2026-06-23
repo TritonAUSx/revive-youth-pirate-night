@@ -886,14 +886,49 @@ async function loadChampions(){
     const [champions, teams] = await Promise.all([fetchChampions(), fetchTeams()]);
     if(!champions||!champions.length){ el.innerHTML='<div class="empty-msg">NO CHAMPIONS ON RECORD</div>'; return; }
 
+    const factionColors = {
+      rebel:'var(--rebel)', empire:'var(--empire)', jedi:'var(--jedi)',
+      sith:'var(--sith)', mandalorian:'var(--mandalorian)', mandalorians:'var(--mandalorian)',
+      republic:'var(--republic)', nightsisters:'var(--nightsisters)',
+      resistance:'var(--resistance)', other:'var(--gold)'
+    };
+    const icons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', mandalorians:'◈', republic:'◆', nightsisters:'✦', resistance:'✦', other:'✦' };
+
     el.innerHTML=champions.map(c=>{
       const teamData = teams ? teams.find(t => t.team === c.team && t.season === c.season) : null;
+      const factionKey = teamData?.faction?.toLowerCase().trim() || 'other';
+      const factionClass = ['rebel','empire','jedi','sith','mandalorian','mandalorians','republic','nightsisters','resistance'].includes(factionKey) ? factionKey : 'other';
+      const color = factionColors[factionClass] || 'var(--gold)';
+      const icon = icons[factionClass] || '✦';
       const hasRoster = teamData && teamData.players && teamData.players.length;
+      const imagePath = teamData ? `images/${teamData.team}.jpg` : null;
+
       return `
-        <div class="champ-card ${hasRoster?'clickable':''}" ${hasRoster?`onclick="openChampRoster(${JSON.stringify(c).replace(/"/g,'&quot;')}, ${JSON.stringify(teamData).replace(/"/g,'&quot;')})"`:''}>
-          <h2>${c.team}</h2>
-          <p>${c.season}</p>
-          ${hasRoster?'<p class="champ-hint">TAP TO VIEW ROSTER</p>':''}
+        <div class="champ-card ${factionClass} ${hasRoster?'clickable':''}"
+             style="border-color:${color}33;box-shadow:0 0 20px ${color}22;"
+             ${hasRoster?`onclick="openChampRoster(${JSON.stringify(c).replace(/"/g,'&quot;')}, ${JSON.stringify(teamData).replace(/"/g,'&quot;')})"`:''}>
+          
+          ${imagePath ? `
+            <div style="width:100%;aspect-ratio:1;overflow:hidden;margin-bottom:12px;border-bottom:1px solid ${color}33;position:relative;">
+              <img src="${imagePath}" 
+                   style="width:100%;height:100%;object-fit:cover;display:block;filter:sepia(0.2);"
+                   onerror="this.parentElement.style.display='none'">
+              <div style="position:absolute;inset:0;background:linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.8));"></div>
+            </div>` : ''}
+
+          <div style="padding:clamp(10px,1.5vh,18px) clamp(12px,1.5vw,18px);">
+            <div style="font-size:clamp(8px,0.7vw,10px);letter-spacing:3px;color:${color};opacity:0.6;font-family:'Courier New',monospace;margin-bottom:6px;">
+              ${c.season||'UNKNOWN SEASON'}
+            </div>
+            <h2 style="color:${color};text-shadow:0 0 10px ${color};margin-bottom:6px;">
+              ${icon} ${c.team}
+            </h2>
+            ${teamData?.faction ? `
+              <div style="font-size:clamp(8px,0.7vw,10px);letter-spacing:2px;color:${color};opacity:0.5;font-family:'Courier New',monospace;margin-bottom:8px;">
+                ${teamData.faction.toUpperCase()}
+              </div>` : ''}
+            ${hasRoster?'<p class="champ-hint" style="color:'+color+';opacity:0.5;">TAP TO VIEW ROSTER</p>':''}
+          </div>
         </div>`;
     }).join('');
   } catch(e){ el.innerHTML=`<div class="empty-msg">ARCHIVE ACCESS DENIED · ${e.message}</div>`; }
