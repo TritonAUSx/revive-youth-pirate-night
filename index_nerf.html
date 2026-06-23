@@ -235,6 +235,7 @@
   .matches-col { display:flex; flex-direction:column; justify-content:space-around; flex:1; gap:clamp(10px,1.5vh,20px); }
 
   .match-node { border:1px solid var(--gold-border); padding:var(--card-pad); cursor:pointer; transition:all 0.2s; position:relative; background:rgba(255,232,26,0.02); overflow:hidden; }
+  .match-node { border-left-width: 3px; }
   .match-node::before { content:''; position:absolute; top:0; left:-60%; width:60%; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); animation:scanline 4s linear infinite; }
   @keyframes scanline { 0%{left:-60%;top:0%} 100%{left:160%;top:100%} }
   .match-node::after { content:''; position:absolute; bottom:0; right:0; width:clamp(6px,0.6vw,10px); height:clamp(6px,0.6vw,10px); border-bottom:1px solid var(--gold); border-right:1px solid var(--gold); opacity:0.5; }
@@ -546,6 +547,19 @@ function renderBracket() {
   const cols=[];
   const labels={1:"FIRST STRIKE",2:"SKIRMISH",3:"THE FINAL DUEL"};
 
+  const factionColors = {
+    rebel:'var(--rebel)', empire:'var(--empire)', jedi:'var(--jedi)',
+    sith:'var(--sith)', mandalorian:'var(--mandalorian)', mandalorians:'var(--mandalorian)',
+    republic:'var(--republic)', nightsisters:'var(--nightsisters)',
+    resistance:'var(--resistance)', other:'var(--gold)'
+  };
+
+  const getFactionColor = (teamName) => {
+    const teamData = appData.teams.find(t => t.team === teamName);
+    const key = teamData?.faction?.toLowerCase().trim() || 'other';
+    return factionColors[key] || 'var(--gold)';
+  };
+
   sortedRounds.forEach(r=>{
     const col=document.createElement("div"); col.className="round-column";
     const title=document.createElement("div"); title.className="round-title";
@@ -559,21 +573,33 @@ function renderBracket() {
       const hasScores=m.scoreA!=null&&m.scoreA!==""&&m.scoreB!=null&&m.scoreB!=="";
       const aWon=hasScores&&Number(m.scoreA)>Number(m.scoreB);
       const bWon=hasScores&&Number(m.scoreB)>Number(m.scoreA);
+
       const seedA = appData.teams.find(t => t.team === m.teamA)?.seed || '';
       const seedB = appData.teams.find(t => t.team === m.teamB)?.seed || '';
-      const labelA = seedA ? `${m.teamA} <span style="color:var(--text-dim);font-size:0.8em">(${seedA})</span>` : (m.teamA || '—');
-      const labelB = seedB ? `${m.teamB} <span style="color:var(--text-dim);font-size:0.8em">(${seedB})</span>` : (m.teamB || '—');
+
+      const colorA = aWon ? getFactionColor(m.teamA) : bWon ? 'var(--text-dim)' : getFactionColor(m.teamA);
+      const colorB = bWon ? getFactionColor(m.teamB) : aWon ? 'var(--text-dim)' : getFactionColor(m.teamB);
+
+      const labelA = seedA ? `${m.teamA} <span style="opacity:0.5;font-size:0.8em">(${seedA})</span>` : (m.teamA || '—');
+      const labelB = seedB ? `${m.teamB} <span style="opacity:0.5;font-size:0.8em">(${seedB})</span>` : (m.teamB || '—');
+
+      // Faction left border
+      const borderColor = getFactionColor(m.teamA);
+      node.style.borderLeftColor = borderColor;
+      node.style.borderLeftWidth = '3px';
+      node.style.boxShadow = `inset 3px 0 8px ${borderColor}33`;
 
       node.innerHTML=`
-        <div class="match-team ${aWon?'winner':bWon?'loser':''}">
+        <div class="match-team ${aWon?'winner':bWon?'loser':''}" style="color:${colorA}">
           <span class="name">${labelA}</span>
           <span class="score">${hasScores?m.scoreA:''}</span>
         </div>
-        <div class="match-team ${bWon?'winner':aWon?'loser':''}">
+        <div class="match-team ${bWon?'winner':aWon?'loser':''}" style="color:${colorB}">
           <span class="name">${labelB}</span>
           <span class="score">${hasScores?m.scoreB:''}</span>
         </div>
         <div class="match-status ${m.winner?'done':''}">${m.winner?'✦ '+m.winner:'STANDING BY'}</div>`;
+
       matchesCol.appendChild(node);
     });
 
