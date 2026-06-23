@@ -43,7 +43,7 @@
     --bg: #000;
     --panel-bg: rgba(0,0,0,0.97);
     --text: #FFE81A;
-    --text-dim: rgba(255,232,26,0.45);
+    --text-dim: #FFE81A;
 
     --hud-size: clamp(14px, 2.2vw, 28px);
     --hud-sub: clamp(9px, 0.9vw, 13px);
@@ -714,7 +714,7 @@ champMatchesCol.innerHTML = `
       position:relative;
       animation:${champion?'champPulse 2s ease-in-out infinite':'none'};
     ">
-      <div style="font-size:clamp(7px,0.7vw,10px);letter-spacing:3px;color:${champColor};opacity:0.6;font-family:'Courier New',monospace;margin-bottom:8px;">
+      <div style="font-size:clamp(7px,0.7vw,10px);letter-spacing:3px;color:${champColor};font-family:'Courier New',monospace;margin-bottom:8px;">
         ${champion ? 'TOURNAMENT CHAMPION' : 'AWAITING CHAMPION'}
       </div>
       <div style="font-size:clamp(28px,3.5vw,52px);margin-bottom:8px;filter:drop-shadow(0 0 8px ${champColor})">
@@ -731,7 +731,7 @@ champMatchesCol.innerHTML = `
         ${champion ? `${champIcon} ${champion} ${champIcon}` : '—'}
       </div>
       ${champion && champTeamData?.faction ? `
-        <div style="font-size:clamp(8px,0.7vw,11px);letter-spacing:2px;color:${champColor};opacity:0.6;font-family:'Courier New',monospace;">
+        <div style="font-size:clamp(8px,0.7vw,11px);letter-spacing:2px;color:${champColor};font-family:'Courier New',monospace;">
           ${champTeamData.faction.toUpperCase()}
         </div>` : ''}
     </div>
@@ -868,7 +868,7 @@ async function loadTeams(){
         </div>
         <div class="team-card-players">${playerRows||'<div class="player-row" style="color:var(--text-dim)">NO PLAYERS LISTED</div>'}</div>
         <div class="team-count">
-          ${t.season ? `<span style="color:var(--gold);opacity:0.6">${t.season}</span> · ` : ''}
+          ${t.season ? `<span style="color:var(--gold)">${t.season}</span> · ` : ''}
           ${t.players.length} OPERATIVE${t.players.length!==1?'S':''}
           </div>
         </div>`;
@@ -917,17 +917,17 @@ async function loadChampions(){
             </div>` : ''}
 
           <div style="padding:clamp(10px,1.5vh,18px) clamp(12px,1.5vw,18px);">
-            <div style="font-size:clamp(8px,0.7vw,10px);letter-spacing:3px;color:${color};opacity:0.6;font-family:'Courier New',monospace;margin-bottom:6px;">
+            <div style="font-size:clamp(8px,0.7vw,10px);letter-spacing:3px;color:${color};font-family:'Courier New',monospace;margin-bottom:6px;">
               ${c.season||'UNKNOWN SEASON'}
             </div>
             <h2 style="color:${color};text-shadow:0 0 10px ${color};margin-bottom:6px;">
               ${icon} ${c.team}
             </h2>
             ${teamData?.faction ? `
-              <div style="font-size:clamp(8px,0.7vw,10px);letter-spacing:2px;color:${color};opacity:0.5;font-family:'Courier New',monospace;margin-bottom:8px;">
+              <div style="font-size:clamp(8px,0.7vw,10px);letter-spacing:2px;color:${color};font-family:'Courier New',monospace;margin-bottom:8px;">
                 ${teamData.faction.toUpperCase()}
               </div>` : ''}
-            ${hasRoster?'<p class="champ-hint" style="color:'+color+';opacity:0.5;">TAP TO VIEW ROSTER</p>':''}
+            ${hasRoster?'<p class="champ-hint" style="color:'+color+';">TAP TO VIEW ROSTER</p>':''}
           </div>
         </div>`;
     }).join('');
