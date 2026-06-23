@@ -648,19 +648,24 @@ function renderBracket() {
       // Faction left border
       const borderColor = getFactionColor(m.teamA);
 
+      const bgA = aWon ? `${getFactionColor(m.teamA)}33` : bWon ? 'rgba(0,0,0,0.4)' : `${getFactionColor(m.teamA)}18`;
+      const bgB = bWon ? `${getFactionColor(m.teamB)}33` : aWon ? 'rgba(0,0,0,0.4)' : `${getFactionColor(m.teamB)}18`;
+      const borderA = aWon ? getFactionColor(m.teamA) : bWon ? 'rgba(255,255,255,0.08)' : `${getFactionColor(m.teamA)}66`;
+      const borderB = bWon ? getFactionColor(m.teamB) : aWon ? 'rgba(255,255,255,0.08)' : `${getFactionColor(m.teamB)}66`;
+
       node.innerHTML=`
         <div class="match-team ${aWon?'winner':bWon?'loser':''}" 
-            style="color:${colorA};border-left:3px solid ${getFactionColor(m.teamA)};box-shadow:inset 3px 0 8px ${getFactionColor(m.teamA)}33">
+            style="color:${colorA};background:${bgA};border-color:${borderA};box-shadow:inset 0 0 12px ${getFactionColor(m.teamA)}22">
           <span class="name">${labelA}</span>
           <span class="score">${hasScores?m.scoreA:''}</span>
         </div>
         <div class="match-team ${bWon?'winner':aWon?'loser':''}" 
-            style="color:${colorB};border-left:3px solid ${getFactionColor(m.teamB)};box-shadow:inset 3px 0 8px ${getFactionColor(m.teamB)}33">
+            style="color:${colorB};background:${bgB};border-color:${borderB};box-shadow:inset 0 0 12px ${getFactionColor(m.teamB)}22">
           <span class="name">${labelB}</span>
           <span class="score">${hasScores?m.scoreB:''}</span>
         </div>
         <div class="match-status ${m.winner?'done':''}">${m.winner?'✦ '+m.winner:'STANDING BY'}</div>`;
-
+        
       matchesCol.appendChild(node);
     });
 
