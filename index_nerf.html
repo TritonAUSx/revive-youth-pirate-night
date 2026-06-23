@@ -1083,23 +1083,64 @@ function closeWin() {
 
 function openChampRoster(champ, teamData){
   const factionKey = teamData.faction ? teamData.faction.toLowerCase().trim() : 'other';
-  const factionClass = ['rebel','empire','jedi','sith','mandolorians','republic','nightsisters','resistance'].includes(factionKey) ? factionKey : 'other';
-  const icons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', republic:'◆', nightsisters:'✦',resistance:'◈', other:'✦' };
+  const factionClass = ['rebel','empire','jedi','sith','mandalorian','mandalorians','republic','nightsisters','resistance'].includes(factionKey) ? factionKey : 'other';
+  const icons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', mandalorians:'◈', republic:'◆', nightsisters:'✦', resistance:'✦', other:'✦' };
+  const factionRGB = {
+    rebel:'224,92,42', empire:'204,204,204', jedi:'58,155,213',
+    sith:'204,0,0', mandalorian:'107,143,168', mandalorians:'107,143,168',
+    republic:'65,105,184', nightsisters:'123,45,139',
+    resistance:'46,125,50', other:'255,232,26'
+  };
+  const factionColors = {
+    rebel:'var(--rebel)', empire:'var(--empire)', jedi:'var(--jedi)',
+    sith:'var(--sith)', mandalorian:'var(--mandalorian)', mandalorians:'var(--mandalorian)',
+    republic:'var(--republic)', nightsisters:'var(--nightsisters)',
+    resistance:'var(--resistance)', other:'var(--gold)'
+  };
+
+  const color = factionColors[factionClass] || 'var(--gold)';
+  const rgb = factionRGB[factionClass] || '255,232,26';
+  const icon = icons[factionClass] || '✦';
+
   const playerRows = teamData.players.map((p,i)=>`
-    <div class="player-row">
-      <div class="player-icon">${i+1}</div>
+    <div class="player-row" style="color:${color};border-bottom:1px solid rgba(${rgb},0.15);">
+      <div class="player-icon" style="border-color:rgba(${rgb},0.5);color:${color};">${i+1}</div>
       ${p}
     </div>`).join('');
 
+  const imagePath = `images/${teamData.team}.jpg`;
+
   document.getElementById("panel-content").innerHTML=`
-    <h2>${icons[factionClass]} ${champ.team}</h2>
-    <p style="font-size:clamp(9px,0.9vw,13px);letter-spacing:3px;color:var(--text-dim);margin-bottom:clamp(16px,2.5vh,28px);font-family:'Courier New',monospace;">${champ.season} CHAMPIONS</p>
-    <div style="text-align:left;margin-bottom:clamp(16px,2.5vh,28px);">
-      ${playerRows}
+    <div style="
+      border:2px solid rgba(${rgb},0.6);
+      box-shadow:0 0 40px rgba(${rgb},0.2),inset 0 0 30px rgba(${rgb},0.05);
+      margin:-clamp(20px,3vh,40px) -clamp(20px,3vw,48px) clamp(20px,3vh,40px);
+      padding:clamp(20px,3vh,40px) clamp(20px,3vw,48px) 0;
+      border-bottom:none;
+    ">
+      <div style="margin:0 -clamp(20px,3vw,48px) clamp(16px,2vh,24px);height:clamp(100px,18vh,180px);overflow:hidden;position:relative;">
+        <img src="${imagePath}"
+             style="width:100%;height:100%;object-fit:cover;display:block;"
+             onerror="this.parentElement.style.display='none'">
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,0.9));"></div>
+        <div style="position:absolute;bottom:12px;left:clamp(20px,3vw,48px);font-size:clamp(18px,2.5vw,32px);font-weight:900;color:${color};text-shadow:0 0 20px rgba(${rgb},0.8);">${icon} ${champ.team}</div>
+      </div>
+
+      <div style="font-size:clamp(9px,0.9vw,13px);letter-spacing:3px;color:${color};opacity:0.6;font-family:'Courier New',monospace;margin-bottom:clamp(12px,2vh,20px);">
+        ${champ.season||''} · ${teamData.faction ? teamData.faction.toUpperCase() : ''} · CHAMPIONS
+      </div>
+
+      <div style="text-align:left;margin-bottom:clamp(16px,2.5vh,28px);">
+        ${playerRows}
+      </div>
     </div>
-    <div class="panel-actions">
+
+    <div class="panel-actions" style="padding-top:clamp(16px,2vh,24px);">
       <button class="panel-btn btn-exit" onclick="closeMatch()">CLOSE</button>
     </div>`;
+
+  document.querySelector('.panel').style.borderColor = `rgba(${rgb},0.8)`;
+  document.querySelector('.panel').style.boxShadow = `0 0 40px rgba(${rgb},0.2)`;
 
   document.getElementById("overlay").classList.remove("hidden");
 }
