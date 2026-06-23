@@ -640,7 +640,7 @@ async function fetchChampions() { return (await fetch(API_URL+"?action=getChampi
 async function fetchTeams() { return (await fetch(API_URL+"?action=getTeams")).json(); }
 
 /* SYNC */
-function init() { sync(); setInterval(sync,2500); }
+function init() { sync(); setInterval(sync,5000); }
 
 async function sync() {
   try {
