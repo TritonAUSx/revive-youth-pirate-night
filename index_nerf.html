@@ -386,13 +386,13 @@
   .team-card.resistance .player-icon { border-color: var(--resistance-border); color: var(--resistance); }
   .team-card.resistance .team-count { border-top-color: rgba(46,125,50,0.08); }
   .team-card.rebel .player-name{
-  color:var(--rebel);
+  color:var(--resistance);
   }
   .team-card.empire .player-name{
-  color:var(--empire);
+  color:var(--resistance);
   }
   .team-card.jedi .player-name{
-  color:var(--jedi);
+  color:var(--resistance);
   }
   .team-card.sith .player-name{
   color:var(--sith);
@@ -884,8 +884,9 @@ async function loadTeams(){
       const playerRows = t.players.map((p,i)=>`
         <div class="player-row">
           <div class="player-icon">${i+1}</div>
-          <span class="player-name">${p}</span
-        </div>`).join('');
+          <span class="player-name">${String(p)}</span>
+        </div>
+      `).join('');
 
       return `
         <div class="team-card ${factionClass}">
