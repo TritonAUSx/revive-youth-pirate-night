@@ -379,7 +379,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzEv58oR8e6yllMJiGo1eMj
   }
 })();
 
-let appData = { matches:[] };
+let appData = { matches:[], teams:[] };
 let lastState = "";
 let tempScores = {};
 
@@ -404,10 +404,15 @@ function init() { sync(); setInterval(sync,2500); }
 
 async function sync() {
   try {
-    const matches = await fetchMatches();
-    if(!matches||!Array.isArray(matches)) return;
+    const [matches, teams] = await Promise.all([fetchMatches(), fetchTeams()]);
+    if (!matches || !Array.isArray(matches)) return;
+    appData.teams = teams || [];
     const state = JSON.stringify(matches);
-    if(state!==lastState){ lastState=state; appData.matches=matches; renderBracket(); }
+    if (state !== lastState) {
+      lastState = state;
+      appData.matches = matches;
+      renderBracket();
+    }
     setStatus(`<span class="pulse"></span>LIVE · ${matches.length} ENGAGEMENTS · SYNCED ${new Date().toLocaleTimeString()}`);
   } catch(e) {
     setStatus(`<span class="pulse" style="background:var(--red)"></span>SIGNAL LOST · ${e.message}`);
@@ -440,13 +445,18 @@ function renderBracket() {
       const hasScores=m.scoreA!=null&&m.scoreA!==""&&m.scoreB!=null&&m.scoreB!=="";
       const aWon=hasScores&&Number(m.scoreA)>Number(m.scoreB);
       const bWon=hasScores&&Number(m.scoreB)>Number(m.scoreA);
+      const seedA = appData.teams.find(t => t.team === m.teamA)?.seed || '';
+      const seedB = appData.teams.find(t => t.team === m.teamB)?.seed || '';
+      const labelA = seedA ? `${m.teamA} <span style="color:var(--text-dim);font-size:0.8em">(${seedA})</span>` : (m.teamA || '—');
+      const labelB = seedB ? `${m.teamB} <span style="color:var(--text-dim);font-size:0.8em">(${seedB})</span>` : (m.teamB || '—');
+
       node.innerHTML=`
         <div class="match-team ${aWon?'winner':bWon?'loser':''}">
-          <span class="name">${m.teamA||'—'}</span>
+          <span class="name">${labelA}</span>
           <span class="score">${hasScores?m.scoreA:''}</span>
         </div>
         <div class="match-team ${bWon?'winner':aWon?'loser':''}">
-          <span class="name">${m.teamB||'—'}</span>
+          <span class="name">${labelB}</span>
           <span class="score">${hasScores?m.scoreB:''}</span>
         </div>
         <div class="match-status ${m.winner?'done':''}">${m.winner?'✦ '+m.winner:'STANDING BY'}</div>`;
