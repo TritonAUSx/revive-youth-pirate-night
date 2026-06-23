@@ -654,18 +654,22 @@ async function submitMatch(id) {
   const s = tempScores[id];
   document.getElementById("panel-result").textContent = "TRANSMITTING...";
   try {
-    const result = await updateScore(id, s.a, s.b);
+    await updateScore(id, s.a, s.b);
     document.getElementById("panel-result").textContent = "✦ RESULT CONFIRMED";
-    delete tempScores[id];
 
-    // Determine winner locally to show popup immediately
-    const match = appData.matches.find(m => m.id == id);
-    const winner = s.a > s.b ? match.teamA : s.b > s.a ? match.teamB : null;
+    const match = appData.matches.find(m => String(m.id) === String(id));
+    console.log("match found:", match);
+    console.log("scores:", s.a, s.b);
+
+    const winner = s.a > s.b ? match?.teamA : s.b > s.a ? match?.teamB : null;
+    console.log("winner:", winner);
+
+    delete tempScores[id];
 
     setTimeout(() => {
       closeMatch();
-      sync();
       if (winner) showWin(winner);
+      sync();
     }, 800);
   } catch(e) {
     document.getElementById("panel-result").textContent = "TRANSMISSION FAILED: " + e.message;
