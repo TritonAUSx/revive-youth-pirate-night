@@ -698,7 +698,7 @@ async function loadTeams(){
 
     el.innerHTML=data.map(t=>{
       const factionKey = t.faction ? t.faction.toLowerCase().trim() : 'other';
-      const factionClass = ['rebel','empire','jedi','sith','mandolorians','republic','nightsisters','resistance'].includes(factionKey) ? factionKey : 'other';
+      const factionClass = ['rebel','empire','jedi','sith','mandalorian','republic','nightsisters','resistance'].includes(factionKey) ? factionKey : 'other';
       const icons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', republic:'◆', nightsisters:'✦', other:'✦' };
       const icon = icons[factionClass];
 
