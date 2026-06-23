@@ -523,11 +523,25 @@ async function sync() {
     if (!matches || !Array.isArray(matches)) return;
     appData.teams = teams || [];
     const state = JSON.stringify(matches);
+
     if (state !== lastState) {
+      // Check for newly completed matches
+      if (lastState) {
+        const oldMatches = JSON.parse(lastState);
+        matches.forEach(m => {
+          const old = oldMatches.find(o => String(o.id) === String(m.id));
+          // If this match just got a winner that wasn't there before
+          if (m.winner && m.winner !== 'DRAW' && (!old || !old.winner)) {
+            showWin(m.winner);
+          }
+        });
+      }
+
       lastState = state;
       appData.matches = matches;
       renderBracket();
     }
+
     setStatus(`<span class="pulse"></span>LIVE · ${matches.length} ENGAGEMENTS · SYNCED ${new Date().toLocaleTimeString()}`);
   } catch(e) {
     setStatus(`<span class="pulse" style="background:var(--red)"></span>SIGNAL LOST · ${e.message}`);
@@ -692,19 +706,9 @@ async function submitMatch(id) {
   try {
     await updateScore(id, s.a, s.b);
     document.getElementById("panel-result").textContent = "✦ RESULT CONFIRMED";
-
-    const match = appData.matches.find(m => String(m.id) === String(id));
-    console.log("match found:", match);
-    console.log("scores:", s.a, s.b);
-
-    const winner = s.a > s.b ? match?.teamA : s.b > s.a ? match?.teamB : null;
-    console.log("winner:", winner);
-
     delete tempScores[id];
-
     setTimeout(() => {
       closeMatch();
-      if (winner) showWin(winner);
       sync();
     }, 800);
   } catch(e) {
