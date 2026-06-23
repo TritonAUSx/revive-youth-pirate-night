@@ -234,22 +234,66 @@
   .round-title { font-size:var(--round-label); letter-spacing:clamp(2px,0.4vw,5px); color:var(--text-dim); text-align:center; padding-bottom:clamp(8px,1vh,14px); border-bottom:1px solid var(--gold-border); margin-bottom:clamp(12px,1.8vh,24px); text-transform:uppercase; }
   .matches-col { display:flex; flex-direction:column; justify-content:space-around; flex:1; gap:clamp(10px,1.5vh,20px); }
 
-  .match-node { border:1px solid var(--gold-border); padding:var(--card-pad); cursor:pointer; transition:all 0.2s; position:relative; background:rgba(255,232,26,0.02); overflow:hidden; }
-  .match-node { border-left-width: 3px; }
-  .match-node::before { content:''; position:absolute; top:0; left:-60%; width:60%; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); animation:scanline 4s linear infinite; }
-  @keyframes scanline { 0%{left:-60%;top:0%} 100%{left:160%;top:100%} }
-  .match-node::after { content:''; position:absolute; bottom:0; right:0; width:clamp(6px,0.6vw,10px); height:clamp(6px,0.6vw,10px); border-bottom:1px solid var(--gold); border-right:1px solid var(--gold); opacity:0.5; }
-  .match-node:hover { border-color:var(--gold); background:var(--gold-dim); box-shadow:0 0 16px rgba(255,232,26,0.15); }
-  .match-node.win { border-color:var(--gold); box-shadow:0 0 14px rgba(255,232,26,0.3); }
+  .match-node {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  overflow: visible;
+  }
+  .match-node::before { display: none; }
+  .match-node::after { display: none; }
 
-  .match-team { font-size:var(--team-name); letter-spacing:clamp(0px,0.1vw,2px); padding:clamp(3px,0.4vh,6px) 0; display:flex; justify-content:space-between; align-items:center; gap:8px; font-family:'Courier New',monospace; }
-  .match-team+.match-team { border-top:1px solid rgba(255,232,26,0.1); margin-top:clamp(3px,0.4vh,6px); padding-top:clamp(6px,0.8vh,10px); }
+  .match-team {
+  font-size: var(--team-name);
+  letter-spacing: clamp(0px,0.1vw,2px);
+  padding: clamp(6px,0.8vh,10px) clamp(10px,1vw,16px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Courier New', monospace;
+  border: 1px solid var(--gold-border);
+  background: rgba(255,232,26,0.02);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+  }
+  .match-team::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -60%;
+  width: 60%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  animation: scanline 4s linear infinite;
+  }
+  .match-team::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: clamp(5px,0.5vw,8px); height: clamp(5px,0.5vw,8px);
+  border-bottom: 1px solid var(--gold);
+  border-right: 1px solid var(--gold);
+  opacity: 0.4;
+  }
   .match-team .name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .match-team .score { font-size:var(--team-score); font-weight:bold; min-width:clamp(16px,1.5vw,28px); text-align:right; }
-  .match-team.winner .name,.match-team.winner .score { color:var(--gold); text-shadow:0 0 8px var(--gold-glow); }
-  .match-team.loser { color:var(--text-dim); }
-  .match-status { font-size:var(--match-status); letter-spacing:clamp(1px,0.2vw,3px); color:var(--text-dim); margin-top:clamp(4px,0.6vh,8px); text-align:right; font-family:'Courier New',monospace; }
-  .match-status.done { color:var(--gold); }
+  .match-team.winner { box-shadow: 0 0 12px rgba(255,232,26,0.2); }
+  .match-team.loser { opacity: 0.45; }
+  .match-status {
+  font-size: var(--match-status);
+  letter-spacing: clamp(1px,0.2vw,3px);
+  color: var(--text-dim);
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  padding: 2px 0;
+  }
+  .match-status.done { color: var(--gold); }
+  .match-node:hover .match-team { border-color: var(--gold); background: var(--gold-dim); }
 
   .bracket-svg { position:absolute; top:0; left:0; pointer-events:none; z-index:0; }
   @keyframes saberDraw { from{stroke-dashoffset:2000;opacity:0} to{stroke-dashoffset:0;opacity:1} }
@@ -439,6 +483,10 @@
   .champ-card.clickable { cursor: pointer; }
   .champ-card.clickable:hover { border-color: var(--gold); box-shadow: 0 0 16px rgba(255,232,26,0.15); background: var(--gold-dim); }
   .champ-hint { font-size: clamp(8px,0.7vw,10px); letter-spacing: 2px; color: var(--text-dim); margin-top: 8px; font-family: 'Courier New', monospace; }
+  @keyframes champPulse {
+  0%, 100% { box-shadow: 0 0 20px var(--gold-glow), inset 0 0 10px rgba(255,232,26,0.05); }
+  50% { box-shadow: 0 0 50px var(--gold-glow), inset 0 0 20px rgba(255,232,26,0.1); }
+}
 </style>
 </head>
 <body>
@@ -599,16 +647,15 @@ function renderBracket() {
 
       // Faction left border
       const borderColor = getFactionColor(m.teamA);
-      node.style.borderLeftColor = borderColor;
-      node.style.borderLeftWidth = '3px';
-      node.style.boxShadow = `inset 3px 0 8px ${borderColor}33`;
 
       node.innerHTML=`
-        <div class="match-team ${aWon?'winner':bWon?'loser':''}" style="color:${colorA}">
+        <div class="match-team ${aWon?'winner':bWon?'loser':''}" 
+            style="color:${colorA};border-left:3px solid ${getFactionColor(m.teamA)};box-shadow:inset 3px 0 8px ${getFactionColor(m.teamA)}33">
           <span class="name">${labelA}</span>
           <span class="score">${hasScores?m.scoreA:''}</span>
         </div>
-        <div class="match-team ${bWon?'winner':aWon?'loser':''}" style="color:${colorB}">
+        <div class="match-team ${bWon?'winner':aWon?'loser':''}" 
+            style="color:${colorB};border-left:3px solid ${getFactionColor(m.teamB)};box-shadow:inset 3px 0 8px ${getFactionColor(m.teamB)}33">
           <span class="name">${labelB}</span>
           <span class="score">${hasScores?m.scoreB:''}</span>
         </div>
@@ -619,6 +666,69 @@ function renderBracket() {
 
     col.appendChild(matchesCol); el.appendChild(col); cols.push({col,round:r});
   });
+  // Find overall tournament winner
+const allRounds = Object.keys(rounds).map(Number).sort((a,b)=>a-b);
+const finalRound = allRounds[allRounds.length - 1];
+const finalMatches = rounds[finalRound];
+const champion = finalMatches?.length === 1 && finalMatches[0].winner && finalMatches[0].winner !== 'DRAW'
+  ? finalMatches[0].winner : null;
+
+// Champion column
+const champCol = document.createElement("div");
+champCol.className = "round-column";
+const champTitle = document.createElement("div");
+champTitle.className = "round-title";
+champTitle.textContent = "GALACTIC CHAMPION";
+champCol.appendChild(champTitle);
+
+const champMatchesCol = document.createElement("div");
+champMatchesCol.className = "matches-col";
+
+const champColor = champion ? getFactionColor(champion) : 'var(--gold)';
+const champTeamData = champion ? appData.teams.find(t => t.team === champion) : null;
+const champFactionKey = champTeamData?.faction?.toLowerCase().trim() || 'other';
+const champIcons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', mandalorians:'◈', republic:'◆', nightsisters:'✦', resistance:'✦', other:'✦' };
+const champIcon = champIcons[champFactionKey] || '✦';
+
+champMatchesCol.innerHTML = `
+  <div style="display:flex;justify-content:center;padding:4px 0;">
+    <div style="
+      border:2px solid ${champColor};
+      padding:clamp(14px,2vh,24px) clamp(12px,1.5vw,20px);
+      text-align:center;
+      background:rgba(0,0,0,0.6);
+      box-shadow:0 0 30px ${champColor}44, inset 0 0 20px ${champColor}11;
+      width:var(--card-width);
+      position:relative;
+      animation:${champion?'champPulse 2s ease-in-out infinite':'none'};
+    ">
+      <div style="font-size:clamp(7px,0.7vw,10px);letter-spacing:3px;color:${champColor};opacity:0.6;font-family:'Courier New',monospace;margin-bottom:8px;">
+        ${champion ? 'TOURNAMENT CHAMPION' : 'AWAITING CHAMPION'}
+      </div>
+      <div style="font-size:clamp(28px,3.5vw,52px);margin-bottom:8px;filter:drop-shadow(0 0 8px ${champColor})">
+        ${champion ? '🏆' : '⚔'}
+      </div>
+      <div style="
+        font-size:clamp(12px,1.4vw,20px);
+        font-weight:900;
+        color:${champColor};
+        letter-spacing:clamp(1px,0.2vw,3px);
+        text-shadow:0 0 16px ${champColor};
+        margin-bottom:${champion?'8px':'0'};
+      ">
+        ${champion ? `${champIcon} ${champion} ${champIcon}` : '—'}
+      </div>
+      ${champion && champTeamData?.faction ? `
+        <div style="font-size:clamp(8px,0.7vw,11px);letter-spacing:2px;color:${champColor};opacity:0.6;font-family:'Courier New',monospace;">
+          ${champTeamData.faction.toUpperCase()}
+        </div>` : ''}
+    </div>
+  </div>
+`;
+
+champCol.appendChild(champMatchesCol);
+el.appendChild(champCol);
+cols.push({ col: champCol, round: finalRound + 1 });
   requestAnimationFrame(()=>drawLines(el,cols));
 }
 
