@@ -37,6 +37,9 @@
     --nightsisters: #7b2d8b;
     --nightsisters-dim: rgba(123,45,139,0.12);
     --nightsisters-border: rgba(123,45,139,0.4);
+    --resistance: #2e7d32;
+    --resistance-dim: rgba(46,125,50,0.12);
+    --resistance-border: rgba(46,125,50,0.4);
     --bg: #000;
     --panel-bg: rgba(0,0,0,0.97);
     --text: #FFE81A;
@@ -330,6 +333,13 @@
   .faction-badge.nightsisters { color: var(--nightsisters); border-color: var(--nightsisters-border); background: var(--nightsisters-dim); }
   .team-card.nightsisters .player-icon { border-color: var(--nightsisters-border); color: var(--nightsisters); }
   .team-card.nightsisters .team-count { border-top-color: rgba(123,45,139,0.08); }
+
+  .team-card.resistance { border-color: var(--resistance-border); }
+  .team-card.resistance:hover { border-color: var(--resistance); box-shadow: 0 0 20px rgba(46,125,50,0.15); }
+  .team-card.resistance .team-card-name { color: var(--resistance); text-shadow: 0 0 8px rgba(46,125,50,0.6); }
+  .faction-badge.resistance { color: var(--resistance); border-color: var(--resistance-border); background: var(--resistance-dim); }
+  .team-card.resistance .player-icon { border-color: var(--resistance-border); color: var(--resistance); }
+  .team-card.resistance .team-count { border-top-color: rgba(46,125,50,0.08); }
 
   .team-card-header {
     padding: clamp(12px,1.5vw,20px) clamp(14px,1.6vw,22px) clamp(10px,1.2vw,16px);
@@ -688,7 +698,7 @@ async function loadTeams(){
 
     el.innerHTML=data.map(t=>{
       const factionKey = t.faction ? t.faction.toLowerCase().trim() : 'other';
-      const factionClass = ['rebel','empire','jedi','sith','mandolorians','republic','nightsisters'].includes(factionKey) ? factionKey : 'other';
+      const factionClass = ['rebel','empire','jedi','sith','mandolorians','republic','nightsisters','resistance'].includes(factionKey) ? factionKey : 'other';
       const icons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', republic:'◆', nightsisters:'✦', other:'✦' };
       const icon = icons[factionClass];
 
@@ -751,12 +761,12 @@ async function confirmReset(){
 function showWin(winnerName) {
   const teamData = appData.teams.find(t => t.team === winnerName);
   const factionKey = teamData?.faction?.toLowerCase().trim() || 'other';
-  const factionClass = ['rebel','empire','jedi','sith','mandalorian','republic','nightsisters'].includes(factionKey) ? factionKey : 'other';
-  const icons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', republic:'◆', nightsisters:'✦', other:'✦' };
+  const factionClass = ['rebel','empire','jedi','sith','mandalorian','republic','nightsisters','resistance'].includes(factionKey) ? factionKey : 'other';
+  const icons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', republic:'◆', nightsisters:'✦',resistance:'◈', other:'✦' };
   const factionColors = {
     rebel:'var(--rebel)', empire:'var(--empire)', jedi:'var(--jedi)',
     sith:'var(--sith)', mandalorian:'var(--mandalorian)',
-    republic:'var(--republic)', nightsisters:'var(--nightsisters)', other:'var(--gold)'
+    republic:'var(--republic)', nightsisters:'var(--nightsisters)', other:'var(--gold)',resistance: 'var(--resistance)',
   };
 
   // Photo or placeholder
@@ -809,8 +819,8 @@ function closeWin() {
 
 function openChampRoster(champ, teamData){
   const factionKey = teamData.faction ? teamData.faction.toLowerCase().trim() : 'other';
-  const factionClass = ['rebel','empire','jedi','sith','mandolorians','republic','nightsisters'].includes(factionKey) ? factionKey : 'other';
-  const icons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', republic:'◆', nightsisters:'✦', other:'✦' };
+  const factionClass = ['rebel','empire','jedi','sith','mandolorians','republic','nightsisters','resistance'].includes(factionKey) ? factionKey : 'other';
+  const icons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', republic:'◆', nightsisters:'✦',resistance:'◈', other:'✦' };
   const playerRows = teamData.players.map((p,i)=>`
     <div class="player-row">
       <div class="player-icon">${i+1}</div>
