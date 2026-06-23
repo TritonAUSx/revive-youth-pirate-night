@@ -760,12 +760,15 @@ function showWin(winnerName) {
   };
 
   // Photo or placeholder
+  const imagePath = `images/${winnerName}.jpg`;
+
   const photoWrap = document.getElementById('win-photo-wrap');
-  if (teamData?.image) {
-    photoWrap.innerHTML = `<img src="${teamData.image}" class="win-photo" alt="${winnerName}" onerror="this.parentElement.innerHTML='<div class=\\'win-photo-placeholder\\'>🏆</div>'">`;
-  } else {
-    photoWrap.innerHTML = `<div class="win-photo-placeholder" style="border-color:${factionColors[factionClass]};box-shadow:0 0 40px ${factionColors[factionClass]}">🏆</div>`;
-  }
+  photoWrap.innerHTML = `<img 
+    src="${imagePath}" 
+    class="win-photo" 
+    alt="${winnerName}"
+    onerror="this.parentElement.innerHTML='<div class=\\'win-photo-placeholder\\' style=\\'border-color:${factionColors[factionClass]};box-shadow:0 0 40px ${factionColors[factionClass]}\\'>🏆</div>'"
+  >`;
 
   document.getElementById('win-name').textContent = winnerName;
   document.getElementById('win-name').style.color = factionColors[factionClass];
