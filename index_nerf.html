@@ -64,6 +64,110 @@
     overflow-x: hidden;
   }
 
+  /* WIN CELEBRATION */
+.win-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: winFadeIn 0.4s ease;
+}
+.win-overlay.hidden { display: none; }
+
+@keyframes winFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.win-photo {
+  width: clamp(140px, 20vw, 280px);
+  height: clamp(140px, 20vw, 280px);
+  object-fit: cover;
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 40px var(--gold-glow), 0 0 80px rgba(255,232,26,0.2);
+  margin-bottom: clamp(16px, 3vh, 32px);
+  animation: photoGlow 1.5s ease-in-out infinite alternate;
+}
+@keyframes photoGlow {
+  from { box-shadow: 0 0 30px var(--gold-glow); }
+  to { box-shadow: 0 0 60px var(--gold-glow), 0 0 100px rgba(255,232,26,0.3); }
+}
+
+.win-photo-placeholder {
+  width: clamp(140px, 20vw, 280px);
+  height: clamp(140px, 20vw, 280px);
+  border: 2px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(48px, 8vw, 96px);
+  margin-bottom: clamp(16px, 3vh, 32px);
+  box-shadow: 0 0 40px var(--gold-glow);
+  animation: photoGlow 1.5s ease-in-out infinite alternate;
+}
+
+.win-label {
+  font-size: clamp(9px, 0.9vw, 13px);
+  letter-spacing: 4px;
+  color: var(--text-dim);
+  font-family: 'Courier New', monospace;
+  margin-bottom: clamp(8px, 1.5vh, 16px);
+  text-transform: uppercase;
+}
+
+.win-name {
+  font-size: clamp(22px, 4vw, 56px);
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: clamp(3px, 0.6vw, 8px);
+  text-shadow: 0 0 30px var(--gold-glow), 0 0 60px rgba(255,232,26,0.3);
+  text-align: center;
+  animation: flicker 3s infinite;
+  margin-bottom: clamp(8px, 1.5vh, 16px);
+}
+
+.win-faction {
+  font-size: clamp(9px, 0.9vw, 13px);
+  letter-spacing: 3px;
+  margin-bottom: clamp(24px, 4vh, 48px);
+  font-family: 'Courier New', monospace;
+}
+
+.win-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  animation: particleFall linear forwards;
+}
+@keyframes particleFall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+.win-close {
+  background: transparent;
+  border: 1px solid var(--gold-border);
+  color: var(--text-dim);
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(9px, 0.9vw, 12px);
+  letter-spacing: 3px;
+  padding: clamp(8px, 1vh, 14px) clamp(20px, 2.5vw, 36px);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.win-close:hover { color: var(--gold); border-color: var(--gold); background: var(--gold-dim); }
+
   #stars { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden; }
   .star { position:absolute; background:#fff; border-radius:50%; animation:twinkle linear infinite; }
   @keyframes twinkle { 0%,100%{opacity:0.1} 50%{opacity:1} }
@@ -546,15 +650,26 @@ function renderPanel(match,id){
 
 function changeScore(id,team,val){ tempScores[id][team]=Math.max(0,tempScores[id][team]+val); document.getElementById("score-"+team).textContent=tempScores[id][team]; }
 
-async function submitMatch(id){
-  const s=tempScores[id];
-  document.getElementById("panel-result").textContent="TRANSMITTING...";
+async function submitMatch(id) {
+  const s = tempScores[id];
+  document.getElementById("panel-result").textContent = "TRANSMITTING...";
   try {
-    await updateScore(id,s.a,s.b);
-    document.getElementById("panel-result").textContent="✦ RESULT CONFIRMED";
+    const result = await updateScore(id, s.a, s.b);
+    document.getElementById("panel-result").textContent = "✦ RESULT CONFIRMED";
     delete tempScores[id];
-    setTimeout(()=>{ closeMatch(); sync(); },1200);
-  } catch(e){ document.getElementById("panel-result").textContent="TRANSMISSION FAILED: "+e.message; }
+
+    // Determine winner locally to show popup immediately
+    const match = appData.matches.find(m => m.id == id);
+    const winner = s.a > s.b ? match.teamA : s.b > s.a ? match.teamB : null;
+
+    setTimeout(() => {
+      closeMatch();
+      sync();
+      if (winner) showWin(winner);
+    }, 800);
+  } catch(e) {
+    document.getElementById("panel-result").textContent = "TRANSMISSION FAILED: " + e.message;
+  }
 }
 
 function closeMatch(){ document.getElementById("overlay").classList.add("hidden"); }
@@ -628,6 +743,63 @@ async function confirmReset(){
     setStatus('<span class="pulse"></span>SEASON RESET COMPLETE');
   } catch(e){ setStatus(`<span class="pulse" style="background:var(--red)"></span>RESET FAILED · ${e.message}`); }
 }
+
+function showWin(winnerName) {
+  const teamData = appData.teams.find(t => t.team === winnerName);
+  const factionKey = teamData?.faction?.toLowerCase().trim() || 'other';
+  const factionClass = ['rebel','empire','jedi','sith','mandalorian','republic','nightsisters'].includes(factionKey) ? factionKey : 'other';
+  const icons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', republic:'◆', nightsisters:'✦', other:'✦' };
+  const factionColors = {
+    rebel:'var(--rebel)', empire:'var(--empire)', jedi:'var(--jedi)',
+    sith:'var(--sith)', mandalorian:'var(--mandalorian)',
+    republic:'var(--republic)', nightsisters:'var(--nightsisters)', other:'var(--gold)'
+  };
+
+  // Photo or placeholder
+  const photoWrap = document.getElementById('win-photo-wrap');
+  if (teamData?.image) {
+    photoWrap.innerHTML = `<img src="${teamData.image}" class="win-photo" alt="${winnerName}" onerror="this.parentElement.innerHTML='<div class=\\'win-photo-placeholder\\'>🏆</div>'">`;
+  } else {
+    photoWrap.innerHTML = `<div class="win-photo-placeholder" style="border-color:${factionColors[factionClass]};box-shadow:0 0 40px ${factionColors[factionClass]}">🏆</div>`;
+  }
+
+  document.getElementById('win-name').textContent = winnerName;
+  document.getElementById('win-name').style.color = factionColors[factionClass];
+  document.getElementById('win-name').style.textShadow = `0 0 30px ${factionColors[factionClass]}`;
+  document.getElementById('win-faction').textContent = teamData?.faction ? `${icons[factionClass]} ${teamData.faction.toUpperCase()} ${icons[factionClass]}` : '';
+  document.getElementById('win-faction').style.color = factionColors[factionClass];
+
+  // Spawn particles in faction colour
+  spawnParticles(factionColors[factionClass]);
+
+  document.getElementById('win-overlay').classList.remove('hidden');
+}
+
+function spawnParticles(color) {
+  const container = document.getElementById('win-particles');
+  container.innerHTML = '';
+  for (let i = 0; i < 60; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      top: -10px;
+      background: ${color};
+      width: ${Math.random() * 4 + 2}px;
+      height: ${Math.random() * 4 + 2}px;
+      animation-duration: ${1.5 + Math.random() * 2.5}s;
+      animation-delay: ${Math.random() * 1.5}s;
+      opacity: ${0.5 + Math.random() * 0.5};
+    `;
+    container.appendChild(p);
+  }
+}
+
+function closeWin() {
+  document.getElementById('win-overlay').classList.add('hidden');
+  document.getElementById('win-particles').innerHTML = '';
+}
+
 function openChampRoster(champ, teamData){
   const factionKey = teamData.faction ? teamData.faction.toLowerCase().trim() : 'other';
   const factionClass = ['rebel','empire','jedi','sith','mandolorians','republic','nightsisters'].includes(factionKey) ? factionKey : 'other';
@@ -654,5 +826,13 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeMatch(); });
 
 init();
 </script>
+<div id="win-overlay" class="win-overlay hidden">
+  <div class="win-particles" id="win-particles"></div>
+  <div id="win-photo-wrap"></div>
+  <div class="win-label">VICTORY</div>
+  <div class="win-name" id="win-name"></div>
+  <div class="win-faction" id="win-faction"></div>
+  <button class="win-close" onclick="closeWin()">DISMISS</button>
+</div>
 </body>
 </html>
