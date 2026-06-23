@@ -8,56 +8,66 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --gold: #FFE81A;
-    --gold-dim: rgba(255,232,26,0);
-    --gold-border:  #e6d119;
-    --gold-glow: rgba(255,232,26,);
-    --red: #ff3b3b;
-    --red-dim: rgba(255,59,59,);
-    --red-border: rgba(255,59,59,);
-    --rebel: #e05c2a;
-    --rebel-dim: rgba(224,92,42,0.12);
-    --rebel-border: rgba(224,92,42,);
-    --empire: #cccccc;
-    --empire-dim: rgba(204,204,204,0.08);
-    --empire-border: rgba(204,204,204,);
-    --jedi: #3a9bd5;
-    --jedi-dim: rgba(58,155,213,0.12);
-    --jedi-border: rgba(58,155,213,);
-    --sith: #cc0000;
-    --sith-dim: rgba(204,0,0,0.12);
-    --sith-border: rgba(204,0,0,);
-    --mandalorian: #6b8fa8;
-    --mandalorian-dim: rgba(107,143,168,0.12);
-    --mandalorian-border: rgba(107,143,168,);
-    --republic: #4169b8;
-    --republic-dim: rgba(65,105,184,0.12);
-    --republic-border: rgba(65,105,184,);
-    --nightsisters: #7b2d8b;
-    --nightsisters-dim: rgba(123,45,139,0.12);
-    --nightsisters-border: rgba(123,45,139,);
-    --resistance: #2e7d32;
-    --resistance-dim: rgba(46,125,50,0.12);
-    --resistance-border: rgba(46,125,50,);
-    --bg: #000;
-    --panel-bg: rgba(0,0,0,0.97);
-    --text: #FFE81A;
-    --text-dim: #FFE81A;
+:root {
+  --gold: #FFE81A;
+  --gold-dim: rgba(255,232,26,0);
+  --gold-border: #e6d119;
+  --gold-glow: rgba(255,232,26,0.8);
 
-    --hud-size: clamp(14px, 2.2vw, 28px);
-    --hud-sub: clamp(9px, 0.9vw, 13px);
-    --nav-size: clamp(9px, 0.85vw, 13px);
-    --status-size: clamp(9px, 0.75vw, 12px);
-    --round-label: clamp(9px, 0.8vw, 13px);
-    --team-name: clamp(13px, 1.3vw, 20px);
-    --team-score: clamp(14px, 1.4vw, 22px);
-    --match-status: clamp(9px, 0.75vw, 12px);
-    --card-pad: clamp(10px, 1.1vw, 18px);
-    --card-width: clamp(160px, 16vw, 280px);
-    --col-gap: clamp(28px, 4vw, 72px);
-    --score-val: clamp(32px, 5vw, 72px);
-  }
+  --red: #ff3b3b;
+  --red-dim: rgba(255,59,59,0.12);
+  --red-border: rgba(255,59,59,0.8);
+
+  --rebel: #e05c2a;
+  --rebel-dim: rgba(224,92,42,0.12);
+  --rebel-border: rgba(224,92,42,0.8);
+
+  --empire: #cccccc;
+  --empire-dim: rgba(204,204,204,0.08);
+  --empire-border: rgba(204,204,204,0.8);
+
+  --jedi: #3a9bd5;
+  --jedi-dim: rgba(58,155,213,0.12);
+  --jedi-border: rgba(58,155,213,0.8);
+
+  --sith: #cc0000;
+  --sith-dim: rgba(204,0,0,0.12);
+  --sith-border: rgba(204,0,0,0.8);
+
+  --mandalorian: #6b8fa8;
+  --mandalorian-dim: rgba(107,143,168,0.12);
+  --mandalorian-border: rgba(107,143,168,0.8);
+
+  --republic: #4169b8;
+  --republic-dim: rgba(65,105,184,0.12);
+  --republic-border: rgba(65,105,184,0.8);
+
+  --nightsisters: #7b2d8b;
+  --nightsisters-dim: rgba(123,45,139,0.12);
+  --nightsisters-border: rgba(123,45,139,0.8);
+
+  --resistance: #2e7d32;
+  --resistance-dim: rgba(46,125,50,0.12);
+  --resistance-border: rgba(46,125,50,0.8);
+
+  --bg: #000;
+  --panel-bg: rgba(0,0,0,0.97);
+  --text: #FFE81A;
+  --text-dim: #FFE81A;
+
+  --hud-size: clamp(14px, 2.2vw, 28px);
+  --hud-sub: clamp(9px, 0.9vw, 13px);
+  --nav-size: clamp(9px, 0.85vw, 13px);
+  --status-size: clamp(9px, 0.75vw, 12px);
+  --round-label: clamp(9px, 0.8vw, 13px);
+  --team-name: clamp(13px, 1.3vw, 20px);
+  --team-score: clamp(14px, 1.4vw, 22px);
+  --match-status: clamp(9px, 0.75vw, 12px);
+  --card-pad: clamp(10px, 1.1vw, 18px);
+  --card-width: clamp(160px, 16vw, 280px);
+  --col-gap: clamp(28px, 4vw, 72px);
+  --score-val: clamp(32px, 5vw, 72px);
+}
 
   body {
     background: var(--bg);
@@ -344,7 +354,7 @@
   .team-card.empire { border-color:var(--empire-border); }
   .team-card.empire:hover { border-color:var(--empire); box-shadow:0 0 20px rgba(204,51,51,0.15); }
 
-  .team-card.jedi { border-color: var(--jedi-border); }
+  .team-card.jedi { border-color: 1px solid var(--jedi-border) !important; }
   .team-card.jedi:hover { border-color: var(--jedi); box-shadow: 0 0 20px rgba(58,155,213,0.15); }
   .team-card.jedi .team-card-name { color: var(--jedi); text-shadow: 0 0 8px rgba(58,155,213,0.6); }
   .faction-badge.jedi { color: var(--jedi); border-color: var(--jedi-border); background: var(--jedi-dim); }
