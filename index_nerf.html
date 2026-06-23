@@ -385,6 +385,33 @@
   .faction-badge.resistance { color: var(--resistance); border-color: var(--resistance-border); background: var(--resistance-dim); }
   .team-card.resistance .player-icon { border-color: var(--resistance-border); color: var(--resistance); }
   .team-card.resistance .team-count { border-top-color: rgba(46,125,50,0.08); }
+  .team-card.rebel .player-name{
+  color:var(--rebel);
+  }
+  .team-card.empire .player-name{
+  color:var(--empire);
+  }
+  .team-card.jedi .player-name{
+  color:var(--jedi);
+  }
+  .team-card.sith .player-name{
+  color:var(--sith);
+  }
+  .team-card.mandalorian .player-name{
+  color:var(--mandalorian);
+  }
+  .team-card.republic .player-name{
+  color:var(--republic);
+  }
+  .team-card.nightsisters .player-name{
+  color:var(--nightsisters);
+  }
+  .team-card.resistance .player-name{
+  color:var(--resistance);
+  }
+  .team-card.other .player-name{
+  color:var(--text-dim);
+  }
 
   .team-card-header {
     padding: clamp(12px,1.5vw,20px) clamp(14px,1.6vw,22px) clamp(10px,1.2vw,16px);
@@ -857,7 +884,7 @@ async function loadTeams(){
       const playerRows = t.players.map((p,i)=>`
         <div class="player-row">
           <div class="player-icon">${i+1}</div>
-          ${p}
+          <span class="player-name">${p}</span
         </div>`).join('');
 
       return `
