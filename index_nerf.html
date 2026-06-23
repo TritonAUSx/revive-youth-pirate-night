@@ -508,31 +508,31 @@
     padding: 0;
   }
   .champ-card.rebel {
-    border-color: var(--rebel) ;
+    border-color: var(--rebel);background: var(--rebel-dim);
   }
 
   .champ-card.empire {
-    border-color: var(--empire) ;
+    border-color: var(--empire) ;background: var(--empire-dim);
   }
 
   .champ-card.jedi {
-    border-color: var(--jedi) ;
+    border-color: var(--jedi) ;background: var(--jedi-dim);
   }
 
   .champ-card.sith {
-    border-color: var(--sith) ;
+    border-color: var(--sith) ;background: var(--sith-dim);
   }
 
   .champ-card.mandalorian {
-    border-color: var(--mandalorian) ;
+    border-color: var(--mandalorian) ;background: var(--mandolorian-dim);
   }
 
   .champ-card.republic {
-    border-color: var(--republic) ;
+    border-color: var(--republic) ;background: var(--republic-dim);
   }
 
   .champ-card.nightsisters {
-    border-color: var(--nightsisters) ;
+    border-color: var(--nightsisters) ;background: var(--nightsisters-dim);
   }
 
   .champ-card.resistance {
@@ -913,6 +913,7 @@ function closeMatch() {
   const panel = document.querySelector('.panel');
   panel.style.borderColor = '';
   panel.style.boxShadow = '';
+  panel.style.background = '';
   const cornerStyle = document.getElementById('panel-corner-style');
   if (cornerStyle) cornerStyle.remove();
 }
@@ -1151,6 +1152,7 @@ function openChampRoster(champ, teamData){
   const panel = document.querySelector('.panel');
   panel.style.borderColor = `rgba(${rgb},0.8)`;
   panel.style.boxShadow = `0 0 40px rgba(${rgb},0.2)`;
+  panel.style.background = 'var(--${factionClass}-dim)';
 
   const style = document.getElementById('panel-corner-style') || document.createElement('style');
   style.id = 'panel-corner-style';
