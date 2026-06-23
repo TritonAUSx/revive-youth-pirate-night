@@ -188,7 +188,7 @@
   body::after {
     content:''; position:fixed; inset:0;
     background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);
-    pointer-events:none; z-index:999;
+    pointer-events:none; z-index: index 999;;
   }
 
   .hud,.nav,.statusbar,.view,.overlay { position:relative; z-index:1; }
@@ -434,6 +434,10 @@
   }
   .team-card.rebel .team-card-header { border-bottom-color: rgba(79,195,247,0.15); }
   .team-card.empire .team-card-header { border-bottom-color: rgba(204,51,51,0.15); }
+  .win-photo { 
+  position: relative;
+  z-index: 1000;
+  }
 
   .team-card-name {
     font-size: clamp(12px, 1.3vw, 19px);
@@ -1012,7 +1016,7 @@ async function loadChampions(){
           ${imagePath ? `
             <div style="width:100%;aspect-ratio:1;overflow:hidden;margin-bottom:12px;border-bottom:1px solid ${color}33;position:relative;">
               <img src="${imagePath}" 
-                   style="width:100%;height:100%;object-fit:cover;display:block;filter:sepia(0.2);"
+                   style="width:100%;height:100%;object-fit:cover;display:block;filter:sepia(0.2);position:relative;z-index:1000"
                    onerror="this.parentElement.style.display='none'">
               <div style="position:absolute;inset:0;background:linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.8));"></div>
             </div>` : ''}
@@ -1065,6 +1069,7 @@ function showWin(winnerName) {
     src="${imagePath}" 
     class="win-photo" 
     alt="${winnerName}"
+    style="position:relative;z-index:1000"
     onerror="this.parentElement.innerHTML='<div class=\\'win-photo-placeholder\\' style=\\'border-color:${factionColors[factionClass]};box-shadow:0 0 40px ${factionColors[factionClass]}\\'>🏆</div>'"
   >`;
 
@@ -1148,7 +1153,7 @@ function openChampRoster(champ, teamData){
       animation:photoGlow 1.5s ease-in-out infinite alternate;
     ">
       <img src="images/${teamData.team}.jpg"
-           style="width:100%;height:100%;object-fit:cover;display:block;"
+           style="width:100%;height:100%;object-fit:cover;display:block;position:relative;z-index:1000"
            onerror="this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;background:rgba(${rgb},0.1)&quot;>🏆</div>'">
     </div>
 
