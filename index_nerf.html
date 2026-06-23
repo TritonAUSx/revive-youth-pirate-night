@@ -675,6 +675,22 @@ async function sync() {
 
 function setStatus(msg){ document.getElementById('statusbar').innerHTML=msg; }
 
+function getFactionClass(teamName) {
+  const teamData = appData.teams.find(t => t.team === teamName);
+  const key = teamData?.faction?.toLowerCase().trim() || 'other';
+  return ['rebel','empire','jedi','sith','mandalorian','mandalorians','republic','nightsisters','resistance'].includes(key) ? key : 'other';
+}
+
+function getFactionRGB(teamName) {
+  const factionRGB = {
+    rebel:'224,92,42', empire:'204,204,204', jedi:'58,155,213',
+    sith:'204,0,0', mandalorian:'107,143,168', mandalorians:'107,143,168',
+    republic:'65,105,184', nightsisters:'123,45,139',
+    resistance:'46,125,50', other:'255,232,26'
+  };
+  return factionRGB[getFactionClass(teamName)] || '255,232,26';
+}
+
 /* BRACKET */
 function renderBracket() {
   const el = document.getElementById("bracket");
@@ -725,8 +741,8 @@ function renderBracket() {
       // Faction left border
       const borderColor = getFactionColor(m.teamA);
 
-      const bgA = aWon ? `${getFactionColor(m.teamA)}33` : bWon ? 'rgba(0,0,0,0.4)' : `${getFactionColor(m.teamA)}18`;
-      const bgB = bWon ? `${getFactionColor(m.teamB)}33` : aWon ? 'rgba(0,0,0,0.4)' : `${getFactionColor(m.teamB)}18`;
+      const bgA = aWon ? `rgba(${getFactionRGB(m.teamA)},0.3)` : bWon ? 'rgba(255,255,255,0.04)' : `var(--${getFactionClass(m.teamA)}-dim)`;
+      const bgB = bWon ? `rgba(${getFactionRGB(m.teamB)},0.3)` : aWon ? 'rgba(255,255,255,0.04)' : `var(--${getFactionClass(m.teamB)}-dim)`;
       const borderA = aWon ? getFactionColor(m.teamA) : bWon ? 'rgba(255,255,255,0.08)' : `${getFactionColor(m.teamA)}66`;
       const borderB = bWon ? getFactionColor(m.teamB) : aWon ? 'rgba(255,255,255,0.08)' : `${getFactionColor(m.teamB)}66`;
 
