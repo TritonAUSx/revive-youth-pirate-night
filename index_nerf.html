@@ -962,12 +962,19 @@ async function loadChampions(){
       republic:'var(--republic)', nightsisters:'var(--nightsisters)',
       resistance:'var(--resistance)', other:'var(--gold)'
     };
+    const factionBorders = {
+      rebel:'var(--rebel-border)', empire:'var(--empire-border)', jedi:'var(--jedi-border)',
+      sith:'var(--sith-border)', mandalorian:'var(--mandalorian-border)', mandalorians:'var(--mandalorian-border)',
+      republic:'var(--republic-border)', nightsisters:'var(--nightsisters-border)',
+      resistance:'var(--resistance-border)', other:'var(--gold)'
+    };
     const icons = { rebel:'◈', empire:'◆', jedi:'◈', sith:'◆', mandalorian:'◈', mandalorians:'◈', republic:'◆', nightsisters:'✦', resistance:'✦', other:'✦' };
 
     el.innerHTML=champions.map(c=>{
       const teamData = teams ? teams.find(t => t.team === c.team && t.season === c.season) : null;
       const factionKey = teamData?.faction?.toLowerCase().trim() || 'other';
       const factionClass = ['rebel','empire','jedi','sith','mandalorian','mandalorians','republic','nightsisters','resistance'].includes(factionKey) ? factionKey : 'other';
+      const borderColor = factionBorders[factionClass];
       const color = factionColors[factionClass] || 'var(--gold)';
       const icon = icons[factionClass] || '✦';
       const hasRoster = teamData && teamData.players && teamData.players.length;
@@ -975,7 +982,7 @@ async function loadChampions(){
 
       return `
         <div class="champ-card ${factionClass} ${hasRoster?'clickable':''}"
-             style="border-color:${color}33;box-shadow:0 0 20px ${color}22;"
+             style="border-color:${color};box-shadow:0 0 20px ${color};"
              ${hasRoster?`onclick="openChampRoster(${JSON.stringify(c).replace(/"/g,'&quot;')}, ${JSON.stringify(teamData).replace(/"/g,'&quot;')})"`:''}>
           
           ${imagePath ? `
