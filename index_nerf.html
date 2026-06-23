@@ -642,8 +642,8 @@ function renderBracket() {
       const colorA = aWon ? getFactionColor(m.teamA) : bWon ? 'var(--text-dim)' : getFactionColor(m.teamA);
       const colorB = bWon ? getFactionColor(m.teamB) : aWon ? 'var(--text-dim)' : getFactionColor(m.teamB);
 
-      const labelA = seedA ? `${m.teamA} <span style="opacity:0.5;font-size:0.8em">(${seedA})</span>` : (m.teamA || '—');
-      const labelB = seedB ? `${m.teamB} <span style="opacity:0.5;font-size:0.8em">(${seedB})</span>` : (m.teamB || '—');
+      const labelA = seedA ? `${m.teamA} <span style="font-size:0.8em">(${seedA})</span>` : (m.teamA || '—');
+      const labelB = seedB ? `${m.teamB} <span style="font-size:0.8em">(${seedB})</span>` : (m.teamB || '—');
 
       // Faction left border
       const borderColor = getFactionColor(m.teamA);
@@ -665,7 +665,7 @@ function renderBracket() {
           <span class="score">${hasScores?m.scoreB:''}</span>
         </div>
         <div class="match-status ${m.winner?'done':''}">${m.winner?'✦ '+m.winner:'STANDING BY'}</div>`;
-        
+
       matchesCol.appendChild(node);
     });
 
