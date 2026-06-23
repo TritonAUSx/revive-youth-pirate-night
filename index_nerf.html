@@ -341,7 +341,8 @@
 
   .team-card {
     border: 1px solid var(--gold-border);
-    background: rgba(255,232,26,0.02);
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(4px);
     position: relative;
     overflow: hidden;
     transition: box-shadow 0.2s, border-color 0.2s;
@@ -349,47 +350,47 @@
   .team-card::before { content:''; position:absolute; top:0; left:-60%; width:60%; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); animation:scanline 5s linear infinite; }
   .team-card:hover { border-color:var(--gold); box-shadow:0 0 20px rgba(255,232,26,0.12); }
 
-  .team-card.rebel { border-color:var(--rebel-border); }
+  .team-card.rebel { border-color:var(--rebel-border);background: var(--rebel-dim);}
   .team-card.rebel:hover { border-color:var(--rebel); box-shadow:0 0 20px rgba(79,195,247,0.15); }
-  .team-card.empire { border-color:var(--empire-border); }
+  .team-card.empire { border-color:var(--empire-border);background: var(--empire-dim); }
   .team-card.empire:hover { border-color:var(--empire); box-shadow:0 0 20px rgba(204,51,51,0.15); }
 
-  .team-card.jedi { border-color: 1px solid var(--jedi-border) !important; }
+  .team-card.jedi { border-color: var(--jedi-border) ; background: var(--jedi-dim); }
   .team-card.jedi:hover { border-color: var(--jedi); box-shadow: 0 0 20px rgba(58,155,213,0.15); }
   .team-card.jedi .team-card-name { color: var(--jedi); text-shadow: 0 0 8px rgba(58,155,213,0.6); }
   .faction-badge.jedi { color: var(--jedi); border-color: var(--jedi-border); background: var(--jedi-dim); }
   .team-card.jedi .player-icon { border-color: var(--jedi-border); color: var(--jedi); }
   .team-card.jedi .team-count { border-top-color: rgba(58,155,213,0.08); }
 
-  .team-card.sith { border-color: var(--sith-border); }
+  .team-card.sith { border-color: var(--sith-border); background: var(--sith-dim);}
   .team-card.sith:hover { border-color: var(--sith); box-shadow: 0 0 20px rgba(204,0,0,0.18); }
   .team-card.sith .team-card-name { color: var(--sith); text-shadow: 0 0 8px rgba(204,0,0,0.7); }
   .faction-badge.sith { color: var(--sith); border-color: var(--sith-border); background: var(--sith-dim); }
   .team-card.sith .player-icon { border-color: var(--sith-border); color: var(--sith); }
   .team-card.sith .team-count { border-top-color: rgba(204,0,0,0.08); }
 
-  .team-card.mandalorian { border-color: var(--mandalorian-border); }
+  .team-card.mandalorian { border-color: var(--mandalorian-border); background: var(--mandalorian-dim);}
   .team-card.mandalorian:hover { border-color: var(--mandalorian); box-shadow: 0 0 20px rgba(107,143,168,0.15); }
   .team-card.mandalorian .team-card-name { color: var(--mandalorian); text-shadow: 0 0 8px rgba(107,143,168,0.6); }
   .faction-badge.mandalorian { color: var(--mandalorian); border-color: var(--mandalorian-border); background: var(--mandalorian-dim); }
   .team-card.mandalorian .player-icon { border-color: var(--mandalorian-border); color: var(--mandalorian); }
   .team-card.mandalorian .team-count { border-top-color: rgba(107,143,168,0.08); }
 
-  .team-card.republic { border-color: var(--republic-border); }
+  .team-card.republic { border-color: var(--republic-border);background: var(--republic-dim); }
   .team-card.republic:hover { border-color: var(--republic); box-shadow: 0 0 20px rgba(65,105,184,0.15); }
   .team-card.republic .team-card-name { color: var(--republic); text-shadow: 0 0 8px rgba(65,105,184,0.6); }
   .faction-badge.republic { color: var(--republic); border-color: var(--republic-border); background: var(--republic-dim); }
   .team-card.republic .player-icon { border-color: var(--republic-border); color: var(--republic); }
   .team-card.republic .team-count { border-top-color: rgba(65,105,184,0.08); }
 
-  .team-card.nightsisters { border-color: var(--nightsisters-border); }
+  .team-card.nightsisters { border-color: var(--nightsisters-border); background: var(--nightsisters-dim);}
   .team-card.nightsisters:hover { border-color: var(--nightsisters); box-shadow: 0 0 20px rgba(123,45,139,0.18); }
   .team-card.nightsisters .team-card-name { color: var(--nightsisters); text-shadow: 0 0 8px rgba(123,45,139,0.7); }
   .faction-badge.nightsisters { color: var(--nightsisters); border-color: var(--nightsisters-border); background: var(--nightsisters-dim); }
   .team-card.nightsisters .player-icon { border-color: var(--nightsisters-border); color: var(--nightsisters); }
   .team-card.nightsisters .team-count { border-top-color: rgba(123,45,139,0.08); }
 
-  .team-card.resistance { border-color: var(--resistance-border); }
+  .team-card.resistance { border-color: var(--resistance-border); background: var(--resistance-dim);}
   .team-card.resistance:hover { border-color: var(--resistance); box-shadow: 0 0 20px rgba(46,125,50,0.15); }
   .team-card.resistance .team-card-name { color: var(--resistance); text-shadow: 0 0 8px rgba(46,125,50,0.6); }
   .faction-badge.resistance { color: var(--resistance); border-color: var(--resistance-border); background: var(--resistance-dim); }
