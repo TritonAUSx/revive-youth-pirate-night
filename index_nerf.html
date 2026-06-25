@@ -277,6 +277,51 @@ body::after { content:''; position:fixed; inset:0; background:repeating-linear-g
   .nav { gap:5px; }
   .nav button { padding:7px 10px; font-size:8px; letter-spacing:1px; }
 }
+
+/* CUSTOM FACTION SELECT */
+.custom-select { position:relative; width:100%; }
+.custom-select-trigger {
+  width:100%;
+  background:rgba(255,232,26,0.04);
+  border:1px solid var(--gold-border);
+  color:var(--gold);
+  font-family:'Courier New',monospace;
+  font-size:clamp(12px,1.1vw,16px);
+  padding:clamp(8px,1vh,14px) clamp(10px,1.2vw,16px);
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  transition:all 0.2s;
+}
+.custom-select-trigger:hover { border-color:var(--gold); box-shadow:0 0 10px rgba(255,232,26,0.15); }
+.custom-select-trigger.open { border-color:var(--gold); box-shadow:0 0 10px rgba(255,232,26,0.15); }
+.custom-select-arrow { font-size:12px; color:var(--text-dim); transition:transform 0.2s; }
+.custom-select-trigger.open .custom-select-arrow { transform:rotate(180deg); }
+.custom-select-options {
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  background:#050505;
+  border:1px solid var(--gold-border);
+  border-top:none;
+  z-index:50;
+  max-height:280px;
+  overflow-y:auto;
+}
+.custom-select-options.hidden { display:none; }
+.custom-option {
+  padding:clamp(8px,1vh,13px) clamp(10px,1.2vw,16px);
+  font-family:'Courier New',monospace;
+  font-size:clamp(12px,1.1vw,16px);
+  cursor:pointer;
+  letter-spacing:1px;
+  transition:background 0.15s;
+  border-bottom:1px solid rgba(255,232,26,0.06);
+}
+.custom-option:last-child { border-bottom:none; }
+.custom-option:hover { background:rgba(255,232,26,0.06); }
 </style>
 </head>
 <body>
@@ -329,18 +374,25 @@ body::after { content:''; position:fixed; inset:0; background:repeating-linear-g
 
     <div class="form-group">
       <label class="form-label">Faction Allegiance</label>
-      <select class="form-select" id="entry-faction">
-        <option value="">— SELECT FACTION —</option>
-        <option value="Rebel">Rebel</option>
-        <option value="Empire">Empire</option>
-        <option value="Jedi">Jedi</option>
-        <option value="Sith">Sith</option>
-        <option value="Mandalorian">Mandalorian</option>
-        <option value="Republic">Republic</option>
-        <option value="Nightsisters">Nightsisters</option>
-        <option value="Resistance">Resistance</option>
-      </select>
+      <div class="custom-select" id="faction-select">
+        <div class="custom-select-trigger" onclick="toggleFactionDropdown()">
+          <span id="faction-display" style="color:rgba(255,232,26,0.25);">— SELECT FACTION —</span>
+          <span class="custom-select-arrow">▾</span>
+      </div>
+      <div class="custom-select-options hidden" id="faction-options">
+        <div class="custom-option" data-value="" style="color:rgba(255,232,26,0.25);" onclick="selectFaction('','— SELECT FACTION —','rgba(255,232,26,0.25)')">— SELECT FACTION —</div>
+        <div class="custom-option" data-value="Rebel" style="color:#e05c2a;" onclick="selectFaction('Rebel','◈ Rebel','#e05c2a')">◈ Rebel</div>
+        <div class="custom-option" data-value="Empire" style="color:#cccccc;" onclick="selectFaction('Empire','◆ Empire','#cccccc')">◆ Empire</div>
+        <div class="custom-option" data-value="Jedi" style="color:#3a9bd5;" onclick="selectFaction('Jedi','◈ Jedi','#3a9bd5')">◈ Jedi</div>
+        <div class="custom-option" data-value="Sith" style="color:#cc0000;" onclick="selectFaction('Sith','◆ Sith','#cc0000')">◆ Sith</div>
+        <div class="custom-option" data-value="Mandalorian" style="color:#6b8fa8;" onclick="selectFaction('Mandalorian','◈ Mandalorian','#6b8fa8')">◈ Mandalorian</div>
+        <div class="custom-option" data-value="Republic" style="color:#4169b8;" onclick="selectFaction('Republic','◆ Republic','#4169b8')">◆ Republic</div>
+        <div class="custom-option" data-value="Nightsisters" style="color:#7b2d8b;" onclick="selectFaction('Nightsisters','✦ Nightsisters','#7b2d8b')">✦ Nightsisters</div>
+        <div class="custom-option" data-value="Resistance" style="color:#2e7d32;" onclick="selectFaction('Resistance','✦ Resistance','#2e7d32')">✦ Resistance</div>
+      </div>
     </div>
+    <input type="hidden" id="entry-faction">
+  </div>
 
     <div class="form-group">
       <label class="form-label">Operatives</label>
@@ -819,6 +871,30 @@ function spawnParticles(color){
 }
 
 function closeWin(){ document.getElementById('win-overlay').classList.add('hidden'); document.getElementById('win-particles').innerHTML=''; }
+
+function toggleFactionDropdown(){
+  const options=document.getElementById('faction-options');
+  const trigger=document.querySelector('.custom-select-trigger');
+  options.classList.toggle('hidden');
+  trigger.classList.toggle('open');
+}
+
+function selectFaction(value, label, color){
+  document.getElementById('entry-faction').value=value;
+  const display=document.getElementById('faction-display');
+  display.textContent=label;
+  display.style.color=color;
+  document.getElementById('faction-options').classList.add('hidden');
+  document.querySelector('.custom-select-trigger').classList.remove('open');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', e=>{
+  if(!e.target.closest('#faction-select')){
+    document.getElementById('faction-options')?.classList.add('hidden');
+    document.querySelector('.custom-select-trigger')?.classList.remove('open');
+  }
+});
 
 /* RESET */
 async function confirmReset(){
