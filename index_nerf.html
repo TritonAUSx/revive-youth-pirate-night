@@ -855,6 +855,7 @@ function openChampRoster(champ,teamData){
 
 /* WIN */
 function showWin(winnerName){
+  console.log("showWin called:", winnerName);
   const teamData=appData.teams.find(t=>t.team===winnerName);
   const factionKey=teamData?.faction?.toLowerCase().trim()||'other';
   const factionClass=FACTIONS.includes(factionKey)?factionKey:'other';
