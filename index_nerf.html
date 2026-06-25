@@ -522,7 +522,10 @@ async function sync(){
         const old=JSON.parse(lastState);
         matches.forEach(m=>{
           const o=old.find(x=>String(x.id)===String(m.id));
-          if(m.winner&&m.winner!=='DRAW'&&(!o||!o.winner)) showWin(m.winner);
+          if(m.winner && m.winner !== 'DRAW'){
+            console.log("FORCING WIN OVERLAY", m.winner);
+            showWin(m.winner);
+          }
         });
       }
       lastState=state; appData.matches=matches; renderBracket();
