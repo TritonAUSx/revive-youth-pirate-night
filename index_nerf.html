@@ -44,18 +44,18 @@
   --panel-bg: rgba(0,0,0,0.97);
   --text: #FFE81A;
   --text-dim: #FFE81A;
-  --team-name: clamp(16px, 2vw, 28px);
-  --team-score: clamp(18px, 2.2vw, 32px);
-  --match-status: clamp(11px, 0.9vw, 14px);
-  --card-pad: clamp(14px, 1.6vw, 26px);
-  --card-width: clamp(220px, 22vw, 420px);
-  --col-gap: clamp(40px, 5.5vw, 100px);
-  --score-val: clamp(48px, 7vw, 96px);
-  --hud-size: clamp(18px, 2.8vw, 36px);
-  --hud-sub: clamp(11px, 1.1vw, 16px);
-  --nav-size: clamp(11px, 1vw, 16px);
-  --status-size: clamp(11px, 0.9vw, 14px);
-  --round-label: clamp(11px, 1vw, 16px);
+  --team-name: clamp(16px, 2.8vw, 42px);
+  --team-score: clamp(18px, 3vw, 48px);
+  --match-status: clamp(12px, 1.4vw, 22px);
+  --card-pad: clamp(14px, 2vw, 32px);
+  --card-width: clamp(220px, 28vw, 520px);
+  --col-gap: clamp(40px, 6vw, 120px);
+  --score-val: clamp(48px, 8vw, 120px);
+  --hud-size: clamp(18px, 3.5vw, 52px);
+  --hud-sub: clamp(12px, 1.4vw, 22px);
+  --nav-size: clamp(12px, 1.3vw, 20px);
+  --status-size: clamp(12px, 1.1vw, 18px);
+  --round-label: clamp(12px, 1.4vw, 22px);
 }
 
 body { background:var(--bg); color:var(--text); font-family:'Orbitron','Courier New',monospace; min-height:100vh; overflow-x:hidden; }
@@ -612,7 +612,7 @@ function renderBracket(){
   champMatchesCol.innerHTML=`
     <div style="display:flex;justify-content:center;padding:4px 0;">
       <div style="border:2px solid ${champColor};padding:clamp(14px,2vh,24px) clamp(12px,1.5vw,20px);text-align:center;background:rgba(0,0,0,0.6);box-shadow:0 0 30px rgba(${champion?getFactionRGB(champion):'255,232,26'},0.2);width:var(--card-width);position:relative;animation:${champion?'champPulse 2s ease-in-out infinite':'none'};">
-       <div style="font-size:clamp(12px,1vw,16px);letter-spacing:3px;color:${champColor};font-family:'Courier New',monospace;margin-bottom:8px;">${champion?'TOURNAMENT CHAMPION':'AWAITING CHAMPION'}</div>
+       <div style="font-size:clamp(14px,1.6vw,26px);letter-spacing:3px;color:${champColor};font-family:'Courier New',monospace;margin-bottom:8px;">${champion?'TOURNAMENT CHAMPION':'AWAITING CHAMPION'}</div>
       ${champion ? `
       <div style="width:clamp(80px,8vw,130px);height:clamp(80px,8vw,130px);margin:0 auto 10px;border:2px solid ${champColor};overflow:hidden;" id="champ-photo-wrap">
         <img src="images/${champion}.jpg"
@@ -620,7 +620,7 @@ function renderBracket(){
           onerror="champPhotoFallback()">
       </div>` : `
       <div style="font-size:clamp(28px,3.5vw,52px);margin-bottom:8px;">⚔</div>`}
-        <div style="font-size:clamp(18px,2.2vw,32px);font-weight:900;color:${champColor};letter-spacing:clamp(2px,0.3vw,5px);text-shadow:0 0 16px ${champColor};margin-bottom:${champion?'8px':'0'};">${champion?`${champIcon} ${champion} ${champIcon}`:'—'}</div>
+        <div style="font-size:clamp(22px,3vw,48px);font-weight:900;color:${champColor};letter-spacing:clamp(2px,0.3vw,5px);text-shadow:0 0 16px ${champColor};margin-bottom:${champion?'8px':'0'};">${champion?`${champIcon} ${champion} ${champIcon}`:'—'}</div>
         ${champion&&champTeamData?.faction?`<div style="font-size:clamp(12px,1vw,15px);letter-spacing:3px;color:${champColor};font-family:'Courier New',monospace;">${champTeamData.faction.toUpperCase()}</div>`:''}
       </div>
     </div>`;
