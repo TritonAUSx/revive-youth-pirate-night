@@ -612,10 +612,20 @@ function renderBracket(){
     <div style="display:flex;justify-content:center;padding:4px 0;">
       <div style="border:2px solid ${champColor};padding:clamp(14px,2vh,24px) clamp(12px,1.5vw,20px);text-align:center;background:rgba(0,0,0,0.6);box-shadow:0 0 30px rgba(${champion?getFactionRGB(champion):'255,232,26'},0.2);width:var(--card-width);position:relative;animation:${champion?'champPulse 2s ease-in-out infinite':'none'};">
        <div style="font-size:clamp(12px,1vw,16px);letter-spacing:3px;color:${champColor};font-family:'Courier New',monospace;margin-bottom:8px;">${champion?'TOURNAMENT CHAMPION':'AWAITING CHAMPION'}</div>
-        ${champion?`
-        <div style="width:clamp(80px,8vw,130px);height:clamp(80px,8vw,130px);margin:0 auto 10px;border:2px solid ${champColor};overflow:hidden;">
-          <img src="images/${champion}.jpg" style="width:100%;height:100%;object-fit:cover;display:block;position:relative;z-index:1000;" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px\'>🏆</div>'">
-        </div>`:`<div style="font-size:clamp(28px,3.5vw,52px);margin-bottom:8px;">⚔</div>`}
+        ${champion ? `
+        <div style="width:clamp(80px,8vw,130px);height:clamp(80px,8vw,130px);margin:0 auto 10px;border:2px solid ${champColor};overflow:hidden;position:relative;">
+          <img
+            src="images/${champion}.jpg"
+            style="width:100%;height:100%;object-fit:cover;display:none;"
+            onload="this.style.display='block';this.nextElementSibling.style.display='none';"
+          >
+          <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;">
+            🏆
+          </div>
+        </div>
+        ` : `
+        <div style="font-size:clamp(28px,3.5vw,52px);margin-bottom:8px;">⚔</div>
+        `}
         <div style="font-size:clamp(18px,2.2vw,32px);font-weight:900;color:${champColor};letter-spacing:clamp(2px,0.3vw,5px);text-shadow:0 0 16px ${champColor};margin-bottom:${champion?'8px':'0'};">${champion?`${champIcon} ${champion} ${champIcon}`:'—'}</div>
         ${champion&&champTeamData?.faction?`<div style="font-size:clamp(12px,1vw,15px);letter-spacing:3px;color:${champColor};font-family:'Courier New',monospace;">${champTeamData.faction.toUpperCase()}</div>`:''}
       </div>
