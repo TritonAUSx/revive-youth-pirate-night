@@ -322,6 +322,8 @@ body::after { content:''; position:fixed; inset:0; background:repeating-linear-g
 }
 .custom-option:last-child { border-bottom:none; }
 .custom-option:hover { background:rgba(255,232,26,0.06); }
+.btn-undo { border-color:rgba(255,165,0,0.6); color:rgba(255,165,0,0.7); }
+.btn-undo:hover { border-color:orange; color:orange; background:rgba(255,165,0,0.08); }
 </style>
 </head>
 <body>
@@ -340,6 +342,7 @@ body::after { content:''; position:fixed; inset:0; background:repeating-linear-g
   <button onclick="showView('teams-view',this)">SQUADRONS</button>
   <button onclick="showView('entry-view',this)">ENLIST TEAM</button>
   <button onclick="showView('champions-view',this)">HALL OF CHAMPIONS</button>
+  <button onclick="showView('history-view',this)">MATCH HISTORY</button>
   <button class="danger" onclick="confirmReset()">RESET SEASON</button>
 </div>
 
@@ -415,6 +418,10 @@ body::after { content:''; position:fixed; inset:0; background:repeating-linear-g
 <!-- CHAMPIONS -->
 <div id="champions-view" class="view">
   <div id="champions-grid"></div>
+</div>
+
+<div id="history-view" class="view">
+  <div id="history-list"></div>
 </div>
 
 <div id="overlay" class="overlay hidden">
@@ -604,13 +611,13 @@ function renderBracket(){
   champMatchesCol.innerHTML=`
     <div style="display:flex;justify-content:center;padding:4px 0;">
       <div style="border:2px solid ${champColor};padding:clamp(14px,2vh,24px) clamp(12px,1.5vw,20px);text-align:center;background:rgba(0,0,0,0.6);box-shadow:0 0 30px rgba(${champion?getFactionRGB(champion):'255,232,26'},0.2);width:var(--card-width);position:relative;animation:${champion?'champPulse 2s ease-in-out infinite':'none'};">
-        <div style="font-size:clamp(7px,0.7vw,10px);letter-spacing:3px;color:${champColor};font-family:'Courier New',monospace;margin-bottom:8px;">${champion?'TOURNAMENT CHAMPION':'AWAITING CHAMPION'}</div>
+       <div style="font-size:clamp(12px,1vw,16px);letter-spacing:3px;color:${champColor};font-family:'Courier New',monospace;margin-bottom:8px;">${champion?'TOURNAMENT CHAMPION':'AWAITING CHAMPION'}</div>
         ${champion?`
         <div style="width:clamp(80px,8vw,130px);height:clamp(80px,8vw,130px);margin:0 auto 10px;border:2px solid ${champColor};overflow:hidden;">
           <img src="images/${champion}.jpg" style="width:100%;height:100%;object-fit:cover;display:block;position:relative;z-index:1000;" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px\'>🏆</div>'">
         </div>`:`<div style="font-size:clamp(28px,3.5vw,52px);margin-bottom:8px;">⚔</div>`}
-        <div style="font-size:clamp(12px,1.4vw,20px);font-weight:900;color:${champColor};letter-spacing:clamp(1px,0.2vw,3px);text-shadow:0 0 16px ${champColor};margin-bottom:${champion?'8px':'0'};">${champion?`${champIcon} ${champion} ${champIcon}`:'—'}</div>
-        ${champion&&champTeamData?.faction?`<div style="font-size:clamp(8px,0.7vw,11px);letter-spacing:2px;color:${champColor};font-family:'Courier New',monospace;">${champTeamData.faction.toUpperCase()}</div>`:''}
+        <div style="font-size:clamp(18px,2.2vw,32px);font-weight:900;color:${champColor};letter-spacing:clamp(2px,0.3vw,5px);text-shadow:0 0 16px ${champColor};margin-bottom:${champion?'8px':'0'};">${champion?`${champIcon} ${champion} ${champIcon}`:'—'}</div>
+        ${champion&&champTeamData?.faction?`<div style="font-size:clamp(12px,1vw,15px);letter-spacing:3px;color:${champColor};font-family:'Courier New',monospace;">${champTeamData.faction.toUpperCase()}</div>`:''}
       </div>
     </div>`;
 
@@ -627,6 +634,7 @@ function drawLines(el,cols){
   const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
   svg.setAttribute("width",W); svg.setAttribute("height",H); svg.classList.add("bracket-svg");
   const elRect=el.getBoundingClientRect(); let delay=0;
+
   for(let ci=0;ci<cols.length-1;ci++){
     const leftNodes=cols[ci].col.querySelectorAll(".match-node");
     const rightNodes=cols[ci+1].col.querySelectorAll(".match-node");
@@ -638,15 +646,28 @@ function drawLines(el,cols){
         const x2=d.left-elRect.left,y2=d.top+d.height/2-elRect.top;
         const mx=(x1+x2)/2;
         const isWin=src.classList.contains('win');
+
+        // Get winner faction colour for this line
+        const matchNode=src;
+        const winnerNameEl=matchNode.querySelector('.match-team.winner .name');
+        const winnerName=winnerNameEl?winnerNameEl.textContent.replace(/\(.*\)/,'').trim():null;
+        const lineColor=winnerName?getFactionColor(winnerName):'rgba(255,232,26,0.3)';
+        const lineRGB=winnerName?getFactionRGB(winnerName):'255,232,26';
+
         if(isWin){
           const glow=document.createElementNS("http://www.w3.org/2000/svg","path");
           glow.setAttribute("d",`M ${x1} ${y1} H ${mx} V ${y2} H ${x2}`);
-          glow.setAttribute("fill","none"); glow.setAttribute("stroke","rgba(255,232,26,0.15)"); glow.setAttribute("stroke-width","8");
+          glow.setAttribute("fill","none");
+          glow.setAttribute("stroke",`rgba(${lineRGB},0.2)`);
+          glow.setAttribute("stroke-width","8");
           glow.classList.add("bracket-line"); glow.style.animationDelay=`${delay}s`; svg.appendChild(glow);
         }
+
         const path=document.createElementNS("http://www.w3.org/2000/svg","path");
         path.setAttribute("d",`M ${x1} ${y1} H ${mx} V ${y2} H ${x2}`);
-        path.setAttribute("fill","none"); path.setAttribute("stroke",isWin?"#FFE81A":"rgba(255,232,26,0.3)"); path.setAttribute("stroke-width",isWin?"2":"1");
+        path.setAttribute("fill","none");
+        path.setAttribute("stroke",isWin?lineColor:'rgba(255,232,26,0.2)');
+        path.setAttribute("stroke-width",isWin?"2":"1");
         path.classList.add("bracket-line"); path.style.animationDelay=`${delay}s`; svg.appendChild(path);
         delay+=0.07;
       });
@@ -660,8 +681,12 @@ window.addEventListener("resize",()=>{ if(appData.matches.length) renderBracket(
 /* MATCH PANEL */
 function openMatch(id){
   const match=appData.matches.find(m=>m.id==id); if(!match) return;
-  if(!tempScores[id]) tempScores[id]={a:match.scoreA!=null&&match.scoreA!==""?Number(match.scoreA):0,b:match.scoreB!=null&&match.scoreB!==""?Number(match.scoreB):0};
-  renderPanel(match,id);
+  if(match.winner){
+    renderReadOnlyPanel(match,id);
+  } else {
+    if(!tempScores[id]) tempScores[id]={a:match.scoreA!=null&&match.scoreA!==""?Number(match.scoreA):0,b:match.scoreB!=null&&match.scoreB!==""?Number(match.scoreB):0};
+    renderPanel(match,id);
+  }
   document.getElementById("overlay").classList.remove("hidden");
 }
 
@@ -689,15 +714,51 @@ function renderPanel(match,id){
     </div>
     <div class="panel-actions">
       <button class="panel-btn btn-submit" onclick="submitMatch('${id}')">CONFIRM RESULT</button>
+      ${match.winner ? `<button class="panel-btn btn-undo" onclick="undoMatch('${id}')">↩ UNDO</button>` : ''}
       <button class="panel-btn btn-exit" onclick="closeMatch()">ABORT</button>
     </div>
     <div id="panel-result"></div>`;
+}
+
+function renderReadOnlyPanel(match,id){
+  const factionColorA=getFactionColor(match.teamA);
+  const factionColorB=getFactionColor(match.teamB);
+  const aWon=Number(match.scoreA)>Number(match.scoreB);
+  const bWon=Number(match.scoreB)>Number(match.scoreA);
+  document.getElementById("panel-content").innerHTML=`
+    <h2>${match.teamA||'—'} VS ${match.teamB||'—'}</h2>
+    <div class="scorebox" style="margin-bottom:clamp(12px,2vh,20px);">
+      <div class="score-side">
+        <h3 style="color:${factionColorA}">${match.teamA||'—'}</h3>
+        <div class="score-val" style="color:${aWon?factionColorA:'rgba(255,255,255,0.3)'}">${match.scoreA}</div>
+        ${aWon?`<div style="font-size:clamp(9px,0.8vw,12px);letter-spacing:2px;color:${factionColorA};font-family:'Courier New',monospace;">✦ WINNER</div>`:''}
+      </div>
+      <div class="score-side">
+        <h3 style="color:${factionColorB}">${match.teamB||'—'}</h3>
+        <div class="score-val" style="color:${bWon?factionColorB:'rgba(255,255,255,0.3)'}">${match.scoreB}</div>
+        ${bWon?`<div style="font-size:clamp(9px,0.8vw,12px);letter-spacing:2px;color:${factionColorB};font-family:'Courier New',monospace;">✦ WINNER</div>`:''}
+      </div>
+    </div>
+    <div style="font-size:clamp(9px,0.85vw,13px);letter-spacing:2px;color:var(--text-dim);font-family:'Courier New',monospace;margin-bottom:clamp(16px,2.5vh,24px);">MATCH COMPLETE</div>
+    <div class="panel-actions">
+      <button class="panel-btn btn-undo" onclick="editMatch('${id}')">✎ EDIT RESULT</button>
+      <button class="panel-btn btn-exit" onclick="closeMatch()">CLOSE</button>
+    </div>`;
+}
+
+function editMatch(id){
+  const match=appData.matches.find(m=>m.id==id); if(!match) return;
+  tempScores[id]={a:Number(match.scoreA)||0,b:Number(match.scoreB)||0};
+  renderPanel(match,id);
 }
 
 function changeScore(id,team,val){ tempScores[id][team]=Math.max(0,tempScores[id][team]+val); document.getElementById("score-"+team).textContent=tempScores[id][team]; }
 
 async function submitMatch(id){
   const s=tempScores[id];
+  const match=appData.matches.find(m=>m.id==id);
+  const winner=s.a>s.b?match.teamA:s.b>s.a?match.teamB:'DRAW';
+  if(!confirm(`Confirm result?\n${match.teamA} ${s.a} — ${s.b} ${match.teamB}\nWinner: ${winner}`)) return;
   document.getElementById("panel-result").textContent="TRANSMITTING...";
   try {
     await updateScore(id,s.a,s.b);
@@ -888,6 +949,17 @@ function selectFaction(value, label, color){
   document.querySelector('.custom-select-trigger').classList.remove('open');
 }
 
+async function undoMatch(id){
+  document.getElementById("panel-result").textContent="UNDOING...";
+  try {
+    await fetch(`${API_URL}?action=undoScore&id=${id}`);
+    document.getElementById("panel-result").textContent="↩ RESULT CLEARED";
+    setTimeout(()=>{ closeMatch(); sync(); },800);
+  } catch(e){
+    document.getElementById("panel-result").textContent="UNDO FAILED: "+e.message;
+  }
+}
+
 // Close dropdown when clicking outside
 document.addEventListener('click', e=>{
   if(!e.target.closest('#faction-select')){
@@ -905,6 +977,40 @@ async function confirmReset(){
     document.getElementById("bracket").innerHTML='<div class="empty-msg">SEASON RESET — AWAITING NEW COMBATANTS</div>';
     setStatus('<span class="pulse"></span>SEASON RESET COMPLETE');
   } catch(e){ setStatus(`<span class="pulse" style="background:var(--red)"></span>RESET FAILED · ${e.message}`); }
+}
+
+async function loadHistory(){
+  const el=document.getElementById('history-list');
+  el.innerHTML='<div class="empty-msg">LOADING ARCHIVES...</div>';
+  try {
+    const data=await (await fetch(API_URL+"?action=getMatchHistory")).json();
+    if(!data||!data.length){ el.innerHTML='<div class="empty-msg">NO MATCH HISTORY</div>'; return; }
+
+    const bySeason={};
+    data.forEach(m=>{ if(!bySeason[m.season]) bySeason[m.season]=[]; bySeason[m.season].push(m); });
+
+    el.innerHTML=Object.keys(bySeason).reverse().map(season=>`
+      <div style="margin-bottom:clamp(20px,3vh,36px);">
+        <div style="font-size:clamp(11px,1vw,15px);letter-spacing:4px;color:var(--gold);border-bottom:1px solid var(--gold-border);padding-bottom:8px;margin-bottom:clamp(10px,1.5vh,16px);font-family:'Courier New',monospace;">${season}</div>
+        ${bySeason[season].map(m=>{
+          const aWon=Number(m.scoreA)>Number(m.scoreB);
+          const bWon=Number(m.scoreB)>Number(m.scoreA);
+          const colorA=getFactionColor(m.teamA);
+          const colorB=getFactionColor(m.teamB);
+          const roundLabels={1:'FIRST STRIKE',2:'SKIRMISH',3:'THE FINAL DUEL'};
+          return `
+            <div style="display:flex;align-items:center;gap:clamp(8px,1.5vw,20px);padding:clamp(8px,1.2vh,14px) 0;border-bottom:1px solid rgba(255,232,26,0.06);font-family:'Courier New',monospace;flex-wrap:wrap;">
+              <div style="font-size:clamp(8px,0.7vw,11px);letter-spacing:2px;color:var(--text-dim);min-width:clamp(80px,8vw,120px);">${roundLabels[m.round]||'ROUND '+m.round}</div>
+              <div style="flex:1;display:flex;align-items:center;gap:clamp(6px,1vw,16px);justify-content:center;">
+                <span style="font-size:clamp(12px,1.2vw,18px);color:${colorA};font-weight:${aWon?'700':'400'};text-align:right;flex:1;">${m.teamA}</span>
+                <span style="font-size:clamp(14px,1.6vw,24px);font-weight:900;color:var(--gold);min-width:clamp(40px,4vw,70px);text-align:center;">${m.scoreA} — ${m.scoreB}</span>
+                <span style="font-size:clamp(12px,1.2vw,18px);color:${colorB};font-weight:${bWon?'700':'400'};flex:1;">${m.teamB}</span>
+              </div>
+              <div style="font-size:clamp(8px,0.7vw,11px);letter-spacing:2px;color:${getFactionColor(m.winner)};min-width:clamp(80px,8vw,120px);text-align:right;">✦ ${m.winner}</div>
+            </div>`;
+        }).join('')}
+      </div>`).join('');
+  } catch(e){ el.innerHTML=`<div class="empty-msg">ARCHIVE ACCESS DENIED · ${e.message}</div>`; }
 }
 
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeMatch(); });
